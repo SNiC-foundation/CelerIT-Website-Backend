@@ -2,7 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import path from 'path';
 import dotenv from 'dotenv';
 
-const dotEnvPath = path.join(__dirname, '../.env');
+const dotEnvPath = path.join(__dirname, '../../.env');
 dotenv.config({ path: dotEnvPath });
 
 let options: DataSourceOptions;
@@ -33,10 +33,23 @@ options = {
   ...options,
   synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
   logging: process.env.TYPEORM_LOGGING === 'true',
-  entities: ['dist/entities/**/*.js'],
-  migrations: ['dist/migrations/**/*.js'],
-  subscribers: ['dist/subscribers/**/*.js'],
 };
+
+if (process.env.NODE_ENV === 'production') {
+  options = {
+    ...options,
+    entities: [path.join(__dirname, '../entities/**/*.js')],
+    migrations: [path.join(__dirname, '../migrations/**/*.js')],
+    subscribers: [path.join(__dirname, '../subscribers/**/*.js')],
+  };
+} else {
+  options = {
+    ...options,
+    entities: [path.join(__dirname, '../entities/**/*.ts')],
+    migrations: [path.join(__dirname, '../migrations/**/*.ts')],
+    subscribers: [path.join(__dirname, '../subscribers/**/*.ts')],
+  };
+}
 
 const AppDataSource = new DataSource(options);
 

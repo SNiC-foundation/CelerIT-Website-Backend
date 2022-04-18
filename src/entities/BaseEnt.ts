@@ -1,8 +1,8 @@
 import {
-  CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn,
+  CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn, BaseEntity,
 } from 'typeorm';
 
-export default class BaseEntity {
+export default class BaseEnt extends BaseEntity {
   @PrimaryGeneratedColumn()
     id: number;
 

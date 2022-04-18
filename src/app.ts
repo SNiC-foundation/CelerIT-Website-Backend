@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import * as swaggerUI from 'swagger-ui-express';
 import { RegisterRoutes } from './routes';
 import * as swaggerJson from './public/swagger.json';
-import AppDataSource from './dataSource';
+import AppDataSource from './database/dataSource';
 
 function createApp(): void {
   AppDataSource.initialize().then(() => {
@@ -14,7 +14,7 @@ function createApp(): void {
     app.use(bodyParser.json());
 
     if (process.env.NODE_ENV === 'development') {
-      app.use(['/openapi', '/docs', '/swagger'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
+      app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
     }
 
     RegisterRoutes(app);
