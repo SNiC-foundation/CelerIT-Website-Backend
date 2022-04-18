@@ -8,6 +8,7 @@
     "dev": "concurrently \"nodemon\" \"nodemon -x npx tsoa spec-and-routes\"",
     "build": "tsoa spec-and-routes && tsc",
     "start": "node build/src/server.js",
+    "tsoa": "tsoa spec-and-routes",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },

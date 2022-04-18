@@ -1,5 +1,6 @@
 {
   "exec": "npx ts-node src/index.ts",
-  "watch": ["src"],
-  "ext": "ts"
+  "watch": ["./src"],
+  "ext": "ts",
+  "ignore": ["./src/routes.ts"]
 }
