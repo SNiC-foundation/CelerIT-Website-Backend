@@ -1,7 +1,8 @@
-import app from './app';
+import dotenv from 'dotenv';
+import path from 'path';
+import createApp from './app';
 
-const port = process.env.PORT || 3000;
+const dotEnvPath = path.join(__dirname, '../.env');
+dotenv.config({ path: dotEnvPath });
 
-app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
-);
+createApp();

@@ -1,17 +1,27 @@
-import express from "express";
-import bodyParser from "body-parser";
-import { RegisterRoutes } from "../build/routes";
-import * as swaggerJson from "./swagger.json";
-import * as swaggerUI from "swagger-ui-express";
+import express from 'express';
+import bodyParser from 'body-parser';
+import * as swaggerUI from 'swagger-ui-express';
+import { RegisterRoutes } from './routes';
+import * as swaggerJson from './public/swagger.json';
+import AppDataSource from './dataSource';
 
-const app = express();
+function createApp(): void {
+  AppDataSource.initialize().then(() => {
+    const app = express();
 
-// Use body parser to read sent json payloads
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+    // Use body parser to read sent json payloads
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
-app.use(["/openapi", "/docs", "/swagger"], swaggerUI.serve, swaggerUI.setup(swaggerJson));
+    if (process.env.NODE_ENV === 'development') {
+      app.use(['/openapi', '/docs', '/swagger'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
+    }
 
-RegisterRoutes(app);
+    RegisterRoutes(app);
 
-export default app;
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+  });
+}
+
+export default createApp;

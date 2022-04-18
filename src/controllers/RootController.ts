@@ -1,4 +1,4 @@
-import { Controller, Get, Route } from "tsoa";
+import { Controller, Get, Route } from 'tsoa';
 
 @Route('')
 export class RootController extends Controller {

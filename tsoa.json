@@ -3,10 +3,17 @@
   "noImplicitAdditionalProperties": "throw-on-extras",
   "controllerPathGlobs": ["src/**/*Controller.ts"],
   "spec": {
-    "outputDirectory": "src",
-    "specVersion": 3
+    "outputDirectory": "./src/public",
+    "specVersion": 3,
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "basePath": "/api"
   },
   "routes": {
-    "routesDir": "build"
+    "basePath": "/api",
+    "routesDir": "./src",
+    "middleware": "express"
   }
 }
