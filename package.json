@@ -8,7 +8,7 @@
     "db:seed": "ts-node test/database/seedDatabase.ts",
     "dev": "concurrently \"nodemon\" \"nodemon -x npx tsoa spec-and-routes\"",
     "build": "tsoa spec-and-routes && tsc",
-    "start": "node build/src/server.js",
+    "start": "node build/src/index.js",
     "tsoa": "tsoa spec-and-routes",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
