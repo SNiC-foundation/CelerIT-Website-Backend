@@ -1,9 +1,7 @@
 import {
-  Column, Entity, JoinColumn, ManyToOne,
+  Column, Entity,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
-// eslint-disable-next-line import/no-cycle
-import Congress from './Congress';
 
 @Entity()
 export default class ProgramPart extends BaseEnt {
@@ -12,11 +10,4 @@ export default class ProgramPart extends BaseEnt {
 
   @Column()
     endTime: Date;
-
-  @Column({ type: 'integer' })
-    congressId: number;
-
-  @ManyToOne(() => Congress)
-  @JoinColumn({ name: 'congressId' })
-    congress: Congress;
 }
