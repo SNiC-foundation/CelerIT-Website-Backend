@@ -1,9 +1,7 @@
 import {
-  Column, Entity, JoinTable, ManyToMany,
+  Column, Entity,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
-// eslint-disable-next-line import/no-cycle
-import Congress from './Congress';
 
 @Entity()
 export default class Partner extends BaseEnt {
@@ -21,8 +19,4 @@ export default class Partner extends BaseEnt {
 
   @Column()
     url: string;
-
-  @ManyToMany(() => Congress)
-  @JoinTable()
-    congresses: Congress[];
 }
