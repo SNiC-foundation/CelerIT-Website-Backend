@@ -1,8 +1,11 @@
-import { Column, Entity, ManyToMany } from 'typeorm';
-import { JoinTable } from 'typeorm/browser';
+import {
+  Column, Entity, ManyToMany, OneToMany,
+} from 'typeorm';
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
 import Partner from './Partner';
+// eslint-disable-next-line import/no-cycle
+import ProgramPart from './ProgramPart';
 
 @Entity()
 export default class Congress extends BaseEnt {
@@ -22,6 +25,8 @@ export default class Congress extends BaseEnt {
     contactInfo: string;
 
   @ManyToMany(() => Partner)
-  @JoinTable()
     partners: Partner[];
+
+  @OneToMany(() => ProgramPart, (part) => part.congress)
+    program: ProgramPart[];
 }

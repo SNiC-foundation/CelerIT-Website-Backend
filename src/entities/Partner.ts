@@ -1,5 +1,5 @@
 import {
-  Column, Entity, JoinColumn, JoinTable, ManyToMany,
+  Column, Entity, JoinTable, ManyToMany,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle

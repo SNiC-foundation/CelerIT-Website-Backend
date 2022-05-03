@@ -1,5 +1,9 @@
-import { Column, Entity } from 'typeorm';
+import {
+  Column, Entity, JoinTable, ManyToMany, OneToOne,
+} from 'typeorm';
 import BaseEnt from './BaseEnt';
+import Role from './Role';
+import Participant from './Participant';
 
 export interface UserParams {
   email: string;
@@ -11,6 +15,19 @@ export default class User extends BaseEnt {
   @Column({ unique: true })
     email: string;
 
-  @Column({})
+  @Column()
     name: string;
+
+  @Column({ default: '' })
+    dietaryWishes: string;
+
+  @Column()
+    agreeToPrivacyPolicy: boolean;
+
+  @OneToOne(() => Participant, (participant) => participant.user)
+    participantInfo: Participant;
+
+  @ManyToMany(() => Role)
+  @JoinTable()
+    roles: Role[];
 }

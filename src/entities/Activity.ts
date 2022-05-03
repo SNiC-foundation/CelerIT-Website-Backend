@@ -1,5 +1,11 @@
-import { Column, Entity } from 'typeorm';
+import {
+  Column, Entity, JoinColumn, ManyToOne, OneToOne,
+} from 'typeorm';
 import BaseEnt from './BaseEnt';
+// eslint-disable-next-line import/no-cycle
+import SubscribeActivity from './SubscribeActivity';
+// eslint-disable-next-line import/no-cycle
+import Speaker from './Speaker';
 
 @Entity()
 export default class Activity extends BaseEnt {
@@ -17,4 +23,14 @@ export default class Activity extends BaseEnt {
 
   @Column({ nullable: true, type: 'integer' })
     maxParticipants?: number;
+
+  @Column({ nullable: true, type: 'integer' })
+    speakerId?: number;
+
+  @ManyToOne(() => Speaker)
+  @JoinColumn({ name: 'speakerId' })
+    speaker?: Speaker;
+
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity)
+    subscribe?: SubscribeActivity;
 }

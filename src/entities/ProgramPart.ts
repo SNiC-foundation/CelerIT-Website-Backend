@@ -2,6 +2,7 @@ import {
   Column, Entity, JoinColumn, ManyToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
+// eslint-disable-next-line import/no-cycle
 import Congress from './Congress';
 
 @Entity()
