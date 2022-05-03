@@ -15,3 +15,14 @@ export default class BaseEnt extends BaseEntity {
   @VersionColumn()
     version: number;
 }
+
+export class BaseEntWithoutID extends BaseEntity {
+  @CreateDateColumn({ update: false })
+  readonly createdAt: Date;
+
+  @UpdateDateColumn()
+    updatedAt: Date;
+
+  @VersionColumn()
+    version: number;
+}
