@@ -6,5 +6,5 @@ AppDataSource.initialize().then(async (dataSource) => {
   await dataSource.synchronize();
 
   const userFactory = new UserFactory(dataSource);
-  await userFactory.createSingleUser();
+  await userFactory.createSingle();
 });
