@@ -11,6 +11,7 @@ import ProgramPart from './ProgramPart';
 export interface ActivityParams {
   name: string;
   location: string;
+  programPartId: number;
   description?: string;
   image?: string;
   maxParticipants?: number;
