@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.5750" tests="0" failures="2">
+  <testsuite name="Root Suite" timestamp="2022-05-17T09:38:49" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="UserService" timestamp="2022-05-17T09:38:49" tests="0" file="D:\Users\20174303\WebstormProjects\SNiC-Congress-Backend\test\unit\services\UserService.ts" time="0.5650" failures="2">
+    <testcase name="UserService &quot;before all&quot; hook in &quot;UserService&quot;" time="0.5520" classname="&quot;before all&quot; hook in &quot;UserService&quot;">
+      <failure message="SQLITE_ERROR: table &quot;participant&quot; already exists" type="QueryFailedError"><![CDATA[QueryFailedError: SQLITE_ERROR: table "participant" already exists
+    at Statement.handler (src\driver\sqlite\SqliteQueryRunner.ts:113:26)
+    at Statement.replacement (node_modules\sqlite3\lib\trace.js:25:27)
+    at Statement.topLevelDomainCallback (node:domain:152:15)
+    at Statement.callbackTrampoline (node:internal/async_hooks:128:24)]]></failure>
+    </testcase>
+    <testcase name="UserService &quot;after all&quot; hook in &quot;UserService&quot;" time="0.0010" classname="&quot;after all&quot; hook in &quot;UserService&quot;">
+      <failure message="Cannot read properties of undefined (reading &apos;destroy&apos;)" type="TypeError"><![CDATA[TypeError: Cannot read properties of undefined (reading 'destroy')
+    at D:\Users\20174303\WebstormProjects\SNiC-Congress-Backend\test\unit\services\UserService.ts:29:22
+    at Generator.next (<anonymous>)
+    at D:\Users\20174303\WebstormProjects\SNiC-Congress-Backend\test\unit\services\UserService.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (test\unit\services\UserService.ts:4:12)
+    at Context.<anonymous> (test\unit\services\UserService.ts:28:20)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

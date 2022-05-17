@@ -9,6 +9,8 @@ import Participant from './Participant';
 export interface UserParams {
   email: string;
   name: string;
+  dietaryWishes: string;
+  agreeToPrivacyPolicy: boolean;
 }
 
 @Entity()
