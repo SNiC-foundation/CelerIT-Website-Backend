@@ -1,17 +1,36 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import flash from 'express-flash';
 import bodyParser from 'body-parser';
 import * as swaggerUI from 'swagger-ui-express';
+import passport from 'passport';
 import { RegisterRoutes } from './routes';
 import * as swaggerJson from './public/swagger.json';
 import AppDataSource from './database/dataSource';
+import { config, localLogin } from './Authentication/LocalStrategy';
 
 function createApp(): void {
   AppDataSource.initialize().then(() => {
     const app = express();
+    const sessionStore = new session.MemoryStore();
 
     // Use body parser to read sent json payloads
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use(cookieParser('secret'));
+    app.use(session({
+      cookie: { maxAge: 60000 },
+      store: sessionStore,
+      saveUninitialized: true,
+      resave: true,
+      secret: 'secret',
+    }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+    config();
+    app.post('/api/login', localLogin);
 
     if (process.env.NODE_ENV === 'development') {
       app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));

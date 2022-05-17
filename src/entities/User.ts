@@ -1,12 +1,12 @@
 import { Column, Entity } from 'typeorm';
-import BaseEnt from './BaseEnt';
+import BaseEnt from './BaseEntity';
 
 export interface UserParams {
   email: string;
   name: string;
 }
 
-@Entity()
+@Entity('User')
 export default class User extends BaseEnt {
   @Column({ unique: true })
     email: string;

@@ -1,19 +1,21 @@
 import {
-  Column, Entity, JoinColumn, OneToOne, PrimaryColumn,
+  Column, Entity, PrimaryColumn, OneToOne, JoinColumn,
 } from 'typeorm';
-import { BaseEntWithoutID } from '../BaseEnt';
 import User from '../User';
+import { BaseEntWithoutId } from '../BaseEntity';
 
-@Entity()
-export default class LocalAuthenticator extends BaseEntWithoutID {
-    @OneToOne(() => User, { nullable: false })
-    @PrimaryColumn()
-    @JoinColumn()
-      user: User;
+@Entity('LocalAuthenticator')
+export default class LocalAuthenticator extends BaseEntWithoutId {
+  @PrimaryColumn('uuid')
+  public userId: number;
 
-    @Column({})
-      hash: string;
+  @OneToOne(() => User, { nullable: false })
+  @JoinColumn({ name: 'userId' })
+  public user: User;
 
-    @Column({})
-      salt: string;
+  @Column()
+    hash: string;
+
+  @Column()
+    salt: string;
 }

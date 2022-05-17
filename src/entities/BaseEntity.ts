@@ -16,7 +16,7 @@ export default class BaseEnt extends BaseEntity {
     version: number;
 }
 
-export class BaseEntWithoutID extends BaseEntity {
+export class BaseEntWithoutId extends BaseEntity {
   @CreateDateColumn({ update: false })
   readonly createdAt: Date;
 
