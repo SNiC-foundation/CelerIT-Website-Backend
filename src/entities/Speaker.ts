@@ -16,6 +16,6 @@ export default class Speaker extends BaseEnt {
   @Column()
     description: string;
 
-  @OneToMany(() => Activity, (act) => act.speaker)
+  @OneToMany(() => Activity, (act) => act.speaker, { nullable: true })
     activities: Activity[];
 }

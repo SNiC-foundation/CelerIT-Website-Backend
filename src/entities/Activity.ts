@@ -45,10 +45,10 @@ export default class Activity extends BaseEnt {
   @Column({ nullable: true, type: 'integer' })
     speakerId?: number;
 
-  @ManyToOne(() => Speaker)
+  @ManyToOne(() => Speaker, { nullable: true })
   @JoinColumn({ name: 'speakerId' })
     speaker?: Speaker;
 
-  @OneToOne(() => SubscribeActivity, (sub) => sub.activity)
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true })
     subscribe?: SubscribeActivity;
 }

@@ -12,9 +12,9 @@ export default class UserFactory extends Factory<User> {
   private constructObject(): User {
     const params: UserParams = {
       email: faker.internet.email(),
-      name: faker.name.firstName(),
-      dietaryWishes: '',
-      agreeToPrivacyPolicy: true,
+      name: faker.name.findName(),
+      dietaryWishes: faker.animal.type(),
+      agreeToPrivacyPolicy: Math.random() > 0.5,
     };
     const user = new User();
     user.name = params.name;
