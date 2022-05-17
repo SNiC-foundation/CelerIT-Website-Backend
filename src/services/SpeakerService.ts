@@ -22,7 +22,7 @@ export default class SpeakerService {
    * TODO: Add relations in findOne()
    */
   async getSpeaker(id: number): Promise<Speaker> {
-    const speaker = await this.repo.findOne({ where: { id }, relations: [''] });
+    const speaker = await this.repo.findOne({ where: { id } });
     if (speaker == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Speaker not found');
     }
@@ -58,12 +58,12 @@ export default class SpeakerService {
    * TODO: Add relations in findOne()
    */
   async deleteSpeaker(id: number): Promise<void> {
-    const speaker = await this.repo.findOne({ where: { id }, relations: [''] });
+    const speaker = await this.repo.findOne({ where: { id } });
 
     if (speaker == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Speaker not found');
     }
 
-    await this.repo.softDelete(speaker.id);
+    await this.repo.delete(speaker.id);
   }
 }

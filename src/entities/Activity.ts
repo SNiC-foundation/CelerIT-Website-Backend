@@ -7,6 +7,15 @@ import SubscribeActivity from './SubscribeActivity';
 // eslint-disable-next-line import/no-cycle
 import Speaker from './Speaker';
 
+export interface ActivityParams {
+  name: string;
+  location: string;
+  description?: string;
+  image?: string;
+  maxParticipants?: number;
+  speakerId?: number;
+}
+
 @Entity()
 export default class Activity extends BaseEnt {
   @Column()

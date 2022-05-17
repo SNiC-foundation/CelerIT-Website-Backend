@@ -1,7 +1,6 @@
 import {
-  Controller, Get, Post, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put,
 } from 'tsoa';
-import express from 'express';
 import SpeakerService from '../services/SpeakerService';
 import Speaker, { SpeakerParams } from '../entities/Speaker';
 
@@ -9,7 +8,7 @@ import Speaker, { SpeakerParams } from '../entities/Speaker';
  * TODO: Add paramater validation
  */
 
-@Route('Speaker')
+@Route('speaker')
 @Tags('Speaker')
 export class SpeakerController extends Controller {
   /**
@@ -33,7 +32,6 @@ export class SpeakerController extends Controller {
   /**
    * createSpeaker() - create speaker
    * @param params Parameters to create speaker with
-   * @param req Express.js request object
    */
   @Post()
   public async createSpeaker(@Body() params: SpeakerParams): Promise<Speaker> {
@@ -44,10 +42,18 @@ export class SpeakerController extends Controller {
    * updateSpeaker() - update speaker
    * @param id ID of speaker to update
    * @param params Update subset of parameter of speaker
-   * @param req Express.js request object
    */
   @Put('{id}')
   public async updateSpeaker(id: number, @Body() params: Partial<SpeakerParams>): Promise<Speaker> {
     return new SpeakerService().updateSpeaker(id, params);
+  }
+
+  /**
+   * Delete speaker
+   * @param id ID of the speaker to delete
+   */
+  @Delete('{id}')
+  public async deleteSpeaker(id: number): Promise<void> {
+    return new SpeakerService().deleteSpeaker(id);
   }
 }

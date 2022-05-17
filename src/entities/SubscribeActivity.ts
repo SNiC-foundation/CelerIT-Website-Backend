@@ -6,6 +6,13 @@ import BaseEnt from './BaseEnt';
 import Activity from './Activity';
 import User from './User';
 
+export interface SubscribeActivityParams {
+  activityId: number;
+  maxParticipants: number;
+  subscriptionListOpenDate: Date;
+  subscriptionListCloseDate: Date;
+}
+
 @Entity()
 export default class SubscribeActivity extends BaseEnt {
   @Column({ type: 'integer' })
