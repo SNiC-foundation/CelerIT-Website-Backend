@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { expect } from 'chai';
-import AppDataSource from '../../../src/database/dataSource';
+import { initializeDataSource } from '../../../src/database/dataSource';
 import User from '../../../src/entities/User';
 import UserFactory from '../../database/factories/UserFactory';
 import UserService from '../../../src/services/UserService';
@@ -13,11 +13,11 @@ describe('UserService', () => {
   };
 
   before(async () => {
-    dataSource = await AppDataSource.initialize();
+    dataSource = await initializeDataSource();
 
     const service = new UserService();
 
-    const users = await (new UserFactory(dataSource)).createMultiple(10);
+    const users = [await (new UserFactory(dataSource)).createSingle()];
 
     ctx = {
       service,

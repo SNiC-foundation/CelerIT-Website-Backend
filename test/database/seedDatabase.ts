@@ -1,7 +1,7 @@
-import AppDataSource from '../../src/database/dataSource';
+import { initializeDataSource } from '../../src/database/dataSource';
 import UserFactory from './factories/UserFactory';
 
-AppDataSource.initialize().then(async (dataSource) => {
+initializeDataSource().then(async (dataSource) => {
   await dataSource.dropDatabase();
   await dataSource.synchronize();
 
