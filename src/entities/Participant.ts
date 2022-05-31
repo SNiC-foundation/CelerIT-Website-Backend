@@ -18,7 +18,7 @@ export default class Participant extends BaseEnt {
     userId: number;
 
   @OneToOne(() => User)
-  @JoinColumn()
+  @JoinColumn({ name: 'userId' })
     user: User;
 
   @Column({ nullable: true })

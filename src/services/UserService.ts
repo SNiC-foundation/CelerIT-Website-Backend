@@ -7,7 +7,7 @@ export default class UserService {
   repo: Repository<User>;
 
   constructor(repo?: Repository<User>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(User);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(User);
   }
 
   /**

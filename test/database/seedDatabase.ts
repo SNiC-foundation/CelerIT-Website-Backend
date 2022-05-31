@@ -1,4 +1,4 @@
-import AppDataSource from '../../src/database/dataSource';
+import { initializeDataSource } from '../../src/database/dataSource';
 import UserFactory from './factories/UserFactory';
 import ActivityFactory from './factories/ActivityFactory';
 import ProgramPartFactory from './factories/ProgramPartFactory';
@@ -8,7 +8,7 @@ import PartnerFactory from './factories/PartnerFactory';
 import RoleFactory from './factories/RoleFactory';
 import SubscribeActivityFactory from './factories/SubscribeActivityFactory';
 
-AppDataSource.initialize().then(async (dataSource) => {
+initializeDataSource().then(async (dataSource) => {
   await dataSource.dropDatabase();
   await dataSource.synchronize();
 

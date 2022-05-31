@@ -3,10 +3,10 @@ import bodyParser from 'body-parser';
 import * as swaggerUI from 'swagger-ui-express';
 import { RegisterRoutes } from './routes';
 import * as swaggerJson from './public/swagger.json';
-import AppDataSource from './database/dataSource';
+import { initializeDataSource } from './database/dataSource';
 
 function createApp(): void {
-  AppDataSource.initialize().then(() => {
+  initializeDataSource().then(() => {
     const app = express();
 
     // Use body parser to read sent json payloads
