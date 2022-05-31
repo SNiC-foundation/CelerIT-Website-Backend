@@ -4,6 +4,7 @@ import path from 'path';
 let AppDataSource: DataSource;
 
 export async function initializeDataSource(): Promise<DataSource> {
+  console.error(process.env);
   let options: DataSourceOptions;
 
   switch (process.env.TYPEORM_CONNECTION) {

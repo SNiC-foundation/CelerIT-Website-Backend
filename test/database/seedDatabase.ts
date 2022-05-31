@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+import path from 'path';
 import { initializeDataSource } from '../../src/database/dataSource';
 import UserFactory from './factories/UserFactory';
 import ActivityFactory from './factories/ActivityFactory';
@@ -7,6 +9,9 @@ import ParticipantFactory from './factories/ParticipantFactory';
 import PartnerFactory from './factories/PartnerFactory';
 import RoleFactory from './factories/RoleFactory';
 import SubscribeActivityFactory from './factories/SubscribeActivityFactory';
+
+const dotEnvPath = path.join(__dirname, '../../.env');
+dotenv.config({ path: dotEnvPath });
 
 initializeDataSource().then(async (dataSource) => {
   await dataSource.dropDatabase();
