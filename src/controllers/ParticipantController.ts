@@ -44,7 +44,10 @@ export class ParticipantController extends Controller {
    * @param params Update subset of parameter of participant
    */
   @Put('{id}')
-  public async updateParticipant(id: number, @Body() params: Partial<ParticipantParams>): Promise<Participant> {
+  public async updateParticipant(
+    id: number,
+                                 @Body() params: Partial<ParticipantParams>,
+  ): Promise<Participant> {
     return new ParticipantService().updateParticipant(id, params);
   }
 

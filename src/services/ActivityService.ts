@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import Activity, { ActivityParams } from '../entities/Activity';
-import AppDataSource from '../database/dataSource';
+import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
 export default class ActivityService {
   repo: Repository<Activity>;
 
   constructor(repo?: Repository<Activity>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(Activity);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(Activity);
   }
 
   /**

@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import Participant, { ParticipantParams } from '../entities/Participant';
-import AppDataSource from '../database/dataSource';
+import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
 export default class ParticipantService {
   repo: Repository<Participant>;
 
   constructor(repo?: Repository<Participant>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(Participant);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(Participant);
   }
 
   /**

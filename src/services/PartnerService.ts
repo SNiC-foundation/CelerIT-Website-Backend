@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import Partner, { PartnerParams } from '../entities/Partner';
-import AppDataSource from '../database/dataSource';
+import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
 export default class PartnerService {
   repo: Repository<Partner>;
 
   constructor(repo?: Repository<Partner>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(Partner);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(Partner);
   }
 
   /**

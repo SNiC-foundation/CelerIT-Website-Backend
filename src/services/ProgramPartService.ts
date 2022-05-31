@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import ProgramPart, { ProgramPartParams } from '../entities/ProgramPart';
-import AppDataSource from '../database/dataSource';
+import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
 export default class ProgramPartService {
   repo: Repository<ProgramPart>;
 
   constructor(repo?: Repository<ProgramPart>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(ProgramPart);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(ProgramPart);
   }
 
   /**

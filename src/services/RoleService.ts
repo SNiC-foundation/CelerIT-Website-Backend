@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 import Role, { RoleParams } from '../entities/Role';
-import AppDataSource from '../database/dataSource';
+import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
 export default class RoleService {
   repo: Repository<Role>;
 
   constructor(repo?: Repository<Role>) {
-    this.repo = repo !== undefined ? repo : AppDataSource.getRepository(Role);
+    this.repo = repo !== undefined ? repo : getDataSource().getRepository(Role);
   }
 
   /**

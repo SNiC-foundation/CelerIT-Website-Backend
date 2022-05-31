@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import User, { UserParams } from '../entities/User';
-import AppDataSource from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
+import { getDataSource } from '../database/dataSource';
 
 export default class UserService {
   repo: Repository<User>;
