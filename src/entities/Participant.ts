@@ -5,6 +5,13 @@ import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
 import User from './User';
 
+export interface ParticipantParams {
+  userId: number;
+  studyAssociation?: string;
+  studyProgram?: string;
+  agreeToSharingWithCompanies?: boolean;
+}
+
 @Entity()
 export default class Participant extends BaseEnt {
   @Column({ type: 'integer' })
