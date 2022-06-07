@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import {
   CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn, BaseEntity,
 } from 'typeorm';

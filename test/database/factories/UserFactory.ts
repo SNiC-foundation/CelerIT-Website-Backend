@@ -18,7 +18,7 @@ export default class UserFactory extends Factory<User> {
     };
     const user = new User();
     user.name = params.name;
-    user.email = params.email;
+    user.email = params.email.toLowerCase();
     user.dietaryWishes = params.dietaryWishes;
     user.agreeToPrivacyPolicy = params.agreeToPrivacyPolicy;
 

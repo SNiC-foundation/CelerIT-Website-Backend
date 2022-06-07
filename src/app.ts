@@ -1,15 +1,13 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import flash from 'express-flash';
 import bodyParser from 'body-parser';
-import * as swaggerUI from 'swagger-ui-express';
 import passport from 'passport';
+import * as swaggerUI from 'swagger-ui-express';
 import { RegisterRoutes } from './routes';
-import * as swaggerJson from './public/swagger.json';
-import AppDataSource from './database/dataSource';
-import { config, localLogin } from './Authentication/LocalStrategy';
 import { initializeDataSource } from './database/dataSource';
+import { config, localLogin } from './Authentication/LocalStrategy';
+import * as swaggerJson from './public/swagger.json';
 
 function createApp(): void {
   initializeDataSource().then(() => {
@@ -32,6 +30,10 @@ function createApp(): void {
     app.use(passport.session());
     config();
     app.post('/api/login', localLogin);
+
+    if (process.env.NODE_ENV === 'development') {
+      app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
+    }
 
     RegisterRoutes(app);
 

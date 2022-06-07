@@ -1,14 +1,16 @@
 import express from 'express';
+import { ApiError, HTTPStatus } from '../helpers/error';
 
 export async function expressAuthentication(
   request: express.Request,
   securityName: string,
+  // eslint-disable-next-line no-unused-vars
   scopes?: string[],
 ): Promise<any> {
   switch (securityName) {
     case 'local': {
       if (!request.isAuthenticated() || request.user === undefined) {
-        throw new Error('You are not logged in.');
+        throw new ApiError(HTTPStatus.Unauthorized, 'You are not logged in.');
       }
 
       // // If any roles are defined, check them

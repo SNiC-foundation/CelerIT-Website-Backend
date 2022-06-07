@@ -34,7 +34,8 @@ export class SubscribeActivityController extends Controller {
    * @param params Parameters to create subscribeActivity with
    */
   @Post()
-  public async createSubscribeActivity(@Body() params: SubscribeActivityParams): Promise<SubscribeActivity> {
+  public async createSubscribeActivity(@Body() params: SubscribeActivityParams)
+      : Promise<SubscribeActivity> {
     return new SubscribeActivityService().createSubscribeActivity(params);
   }
 

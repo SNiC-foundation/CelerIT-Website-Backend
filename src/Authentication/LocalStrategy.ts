@@ -6,6 +6,17 @@ import { body, check, validationResult } from 'express-validator';
 import User from '../entities/User';
 import LocalAuthenticator from '../entities/Authentication/LocalAuthenticator';
 
+export function generateSalt(): string {
+  return crypto.randomBytes(16).toString('hex');
+}
+
+export function hashPassword(password: string, salt: string) {
+  const hash = crypto.createHash('sha256');
+  hash.update(password);
+  hash.update(salt);
+  return hash.digest('hex');
+}
+
 export function config() {
   passport.serializeUser<any, any>((req, user, done) => {
     done(undefined, user);
@@ -20,20 +31,23 @@ export function config() {
   const LocalStrategy = passportLocal.Strategy;
 
   passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => (
-    (LocalAuthenticator.findOne({ where: { user: { email } }, relations: ['user'] }).then((auth) => {
-      if (!auth) {
-        return done(undefined, false, { message: 'Incorrect username or password.' });
+    User.findOne({ where: { email } }).then((user) => {
+      if (!user) {
+        done(undefined, false, { message: 'Email is not registered.' });
+        return;
       }
-      return crypto.pbkdf2(password, auth.salt, 310000, 32, 'sha256', (err, hashedPassword) => {
-        if (err) {
-          return done(err);
+      (LocalAuthenticator.findOne({ where: { userId: user.id }, relations: ['user'] }).then((auth) => {
+        if (!auth) {
+          return done(undefined, false, { message: 'Incorrect username or password.' });
         }
-        if (!crypto.timingSafeEqual(Buffer.from(auth.hash), hashedPassword)) {
+
+        const hashedPassword = hashPassword(password, auth.salt);
+        if (!crypto.timingSafeEqual(Buffer.from(auth.hash), Buffer.from(hashedPassword))) {
           return done(null, false, { message: 'Incorrect username or password.' });
         }
         return done(null, auth);
-      });
-    }))).catch((err) => done(err))));
+      }));
+    })).catch((err) => done(err))));
 }
 
 export async function localLogin(

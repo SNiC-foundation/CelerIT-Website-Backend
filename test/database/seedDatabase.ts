@@ -9,6 +9,7 @@ import ParticipantFactory from './factories/ParticipantFactory';
 import PartnerFactory from './factories/PartnerFactory';
 import RoleFactory from './factories/RoleFactory';
 import SubscribeActivityFactory from './factories/SubscribeActivityFactory';
+import LocalAuthenticatorFactory from './factories/LocalAuthenticatorFactory';
 
 const dotEnvPath = path.join(__dirname, '../../.env');
 dotenv.config({ path: dotEnvPath });
@@ -25,6 +26,7 @@ initializeDataSource().then(async (dataSource) => {
   const speakerFactory = new SpeakerFactory(dataSource);
   const subscribeActivityFactory = new SubscribeActivityFactory(dataSource);
   const userFactory = new UserFactory(dataSource);
+  const localAuthFactory = new LocalAuthenticatorFactory(dataSource);
 
   const users = await userFactory.createMultiple(15);
   await partnerFactory.createMultiple(5);
@@ -34,4 +36,5 @@ initializeDataSource().then(async (dataSource) => {
   const speakers = await speakerFactory.createMultiple(3);
   const activities = await activityFactory.createMultiple(programParts, speakers, 20, true);
   await subscribeActivityFactory.createMultiple(activities, 10);
+  await localAuthFactory.createMultiple(10);
 });

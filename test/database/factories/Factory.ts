@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
-import BaseEnt from '../../../src/entities/BaseEnt';
+import { BaseEntWithoutId } from '../../../src/entities/BaseEnt';
 
-abstract class Factory<T extends BaseEnt> {
+abstract class Factory<T extends BaseEntWithoutId> {
   protected repo: Repository<T>;
 
   public abstract createSingle(): Promise<T>;
