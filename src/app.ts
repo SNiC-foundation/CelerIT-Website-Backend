@@ -9,9 +9,10 @@ import { RegisterRoutes } from './routes';
 import * as swaggerJson from './public/swagger.json';
 import AppDataSource from './database/dataSource';
 import { config, localLogin } from './Authentication/LocalStrategy';
+import { initializeDataSource } from './database/dataSource';
 
 function createApp(): void {
-  AppDataSource.initialize().then(() => {
+  initializeDataSource().then(() => {
     const app = express();
     const sessionStore = new session.MemoryStore();
 
@@ -31,10 +32,6 @@ function createApp(): void {
     app.use(passport.session());
     config();
     app.post('/api/login', localLogin);
-
-    if (process.env.NODE_ENV === 'development') {
-      app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
-    }
 
     RegisterRoutes(app);
 

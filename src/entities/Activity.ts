@@ -8,6 +8,16 @@ import SubscribeActivity from './SubscribeActivity';
 import Speaker from './Speaker';
 import ProgramPart from './ProgramPart';
 
+export interface ActivityParams {
+  name: string;
+  location: string;
+  programPartId: number;
+  description?: string;
+  image?: string;
+  maxParticipants?: number;
+  speakerId?: number;
+}
+
 @Entity()
 export default class Activity extends BaseEnt {
   @Column()
@@ -35,10 +45,10 @@ export default class Activity extends BaseEnt {
   @Column({ nullable: true, type: 'integer' })
     speakerId?: number;
 
-  @ManyToOne(() => Speaker)
+  @ManyToOne(() => Speaker, { nullable: true })
   @JoinColumn({ name: 'speakerId' })
     speaker?: Speaker;
 
-  @OneToOne(() => SubscribeActivity, (sub) => sub.activity)
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true })
     subscribe?: SubscribeActivity;
 }
