@@ -66,4 +66,12 @@ export default class ParticipantService {
 
     await this.repo.delete(participant.id);
   }
+
+  /**
+   * Request encrypted participant ID
+   */
+  async getEncryptedParticipantId(id: number): Promise<String> {
+    // Encrypt with private key, return
+    return `${id}`;
+  }
 }

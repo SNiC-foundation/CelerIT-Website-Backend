@@ -1,7 +1,8 @@
 import {
-  Column, Entity,
+  Column, Entity, JoinTable, ManyToMany,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
+import Participant from './Participant';
 
 export interface PartnerParams {
   name: string;
@@ -9,6 +10,10 @@ export interface PartnerParams {
   specialization: string;
   description: string;
   url: string;
+}
+
+export interface QRParams {
+  encryptedId: string;
 }
 
 @Entity()
@@ -27,4 +32,8 @@ export default class Partner extends BaseEnt {
 
   @Column()
     url: string;
+
+  @ManyToMany(() => Participant)
+  @JoinTable()
+    participants: Participant[];
 }

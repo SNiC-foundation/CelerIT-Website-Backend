@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import Partner, { PartnerParams } from '../entities/Partner';
+import Partner, { PartnerParams, QRParams } from '../entities/Partner';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
@@ -65,5 +65,21 @@ export default class PartnerService {
     }
 
     await this.repo.delete(partner.id);
+  }
+
+  /**
+   * QR Code Scanned
+   */
+  async requestScan(id: number, params: Partial<QRParams>): Promise<void> {
+    // Decrypt string, return 204 if participant exists
+    // return 400 if bad request
+  }
+
+  /**
+   * Log participant scan to database
+   */
+  async logScan(id: number): Promise<void> {
+    // Check if participant_id agrees
+    // Store in scan table
   }
 }

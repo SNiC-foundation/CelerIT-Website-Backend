@@ -2,7 +2,7 @@ import {
   Controller, Get, Post, Delete, Route, Body, Tags, Put,
 } from 'tsoa';
 import PartnerService from '../services/PartnerService';
-import Partner, { PartnerParams } from '../entities/Partner';
+import Partner, { PartnerParams, QRParams } from '../entities/Partner';
 
 /**
  * TODO: Add paramater validation
@@ -55,5 +55,14 @@ export class PartnerController extends Controller {
   @Delete('{id}')
   public async deletePartner(id: number): Promise<void> {
     return new PartnerService().deletePartner(id);
+  }
+
+  /**
+   * Request scan of an encrypted participant ID
+   * @param encryptedID Encrypted participant ID of the scanned participant
+   */
+  @Post('{id}/scanqr')
+  public async requestScan(id: number, @Body() params: Partial<QRParams>): Promise<void> {
+    return new PartnerService().requestScan(id, params);
   }
 }
