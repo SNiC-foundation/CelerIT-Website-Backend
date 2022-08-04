@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import User from '../../../src/entities/User';
 import Factory from './Factory';
 import LocalAuthenticator, { LocalAuthenticatorParams } from '../../../src/entities/Authentication/LocalAuthenticator';
-import { generateSalt, hashPassword } from '../../../src/Authentication/LocalStrategy';
+import { generateSalt, hashPassword } from '../../../src/authentication/LocalStrategy';
 import UserFactory from './UserFactory';
 
 export default class LocalAuthenticatorFactory extends Factory<LocalAuthenticator> {

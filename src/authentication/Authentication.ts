@@ -1,6 +1,12 @@
 import express from 'express';
 import { ApiError, HTTPStatus } from '../helpers/error';
 
+/**
+ * Express Authentication function that checks if user can access resource.
+ * @param request - The express request to check
+ * @param securityName - Type of authentication to check
+ * @param scopes - Required roles for access
+ */
 export async function expressAuthentication(
   request: express.Request,
   securityName: string,

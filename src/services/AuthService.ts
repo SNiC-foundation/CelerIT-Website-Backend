@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import User from '../entities/User';
 import LocalAuthenticator from '../entities/Authentication/LocalAuthenticator';
-import { generateSalt, hashPassword } from '../Authentication/LocalStrategy';
+import { generateSalt, hashPassword } from '../authentication/LocalStrategy';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 

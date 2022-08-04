@@ -29,7 +29,7 @@
         }
       },
       "paths": {
-        "/login/": {
+        "/login": {
           "post": {
             "operationId": "Login",
             "responses": {
@@ -71,6 +71,6 @@
     "basePath": "/api",
     "routesDir": "./src",
     "middleware": "express",
-    "authenticationModule": "./src/Authentication/Authentication.ts"
+    "authenticationModule": "./src/authentication/Authentication.ts"
   }
 }
