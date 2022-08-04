@@ -1,7 +1,9 @@
 import { Repository } from 'typeorm';
+import * as forge from 'node-forge';
 import Participant, { ParticipantParams } from '../entities/Participant';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
+import keys from '../qrcodes/keys.json';
 
 export default class ParticipantService {
   repo: Repository<Participant>;
@@ -72,6 +74,13 @@ export default class ParticipantService {
    */
   async getEncryptedParticipantId(id: number): Promise<String> {
     // Encrypt with private key, return
-    return `${id}`;
+    const { key, iv } = keys;
+
+    const cipher = forge.cipher.createCipher('AES-CBC', key);
+    cipher.start({ iv });
+    cipher.update(forge.util.createBuffer(`${id}`));
+    cipher.finish();
+    const encrypted = cipher.output;
+    return `${encrypted.toHex()}`;
   }
 }

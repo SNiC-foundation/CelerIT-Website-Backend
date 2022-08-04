@@ -2,17 +2,16 @@ import QRCode from 'qrcode';
 import * as forge from 'node-forge';
 import keys from './keys.json';
 
-// sign data with a private key and output DigestInfo DER-encoded bytes
-// (defaults to RSASSA PKCS#1 v1.5)
-const md = forge.md.sha1.create();
+const { key, iv } = keys;
 
-// const publicKey = forge.pki.publicKeyFromPem(keys.publicKeyPem);
-const privateKey = forge.pki.privateKeyFromPem(keys.privateKeyPem);
+const cipher = forge.cipher.createCipher('AES-CBC', key);
+cipher.start({ iv });
+cipher.update(forge.util.createBuffer('217'));
+cipher.finish();
+const encrypted = cipher.output;
+// outputs encrypted hex
 
-md.update('sign this', 'utf8');
-const encryptedId = privateKey.sign(md);
-
-QRCode.toFile('../../../src/qrcodes/generated/foo.png', encryptedId, {
+QRCode.toFile('../../../src/qrcodes/generated/foo.png', encrypted.toHex(), {
   color: {
     dark: '#000000', // Black dots
     light: '#0000', // Transparent background
@@ -21,3 +20,16 @@ QRCode.toFile('../../../src/qrcodes/generated/foo.png', encryptedId, {
   if (err) throw err;
   console.log('done');
 });
+
+console.log(encrypted);
+console.log(forge.util.createBuffer(forge.util.hexToBytes(encrypted.toHex())));
+
+// decrypt some bytes using CBC mode
+// (other modes include: CFB, OFB, CTR, and GCM)
+const decipher = forge.cipher.createDecipher('AES-CBC', key);
+decipher.start({ iv });
+decipher.update(forge.util.createBuffer(forge.util.hexToBytes(encrypted.toHex())));
+const result = decipher.finish(); // check 'result' for true/false
+console.log(result);
+// outputs decrypted hex
+console.log(decipher.output.toString());

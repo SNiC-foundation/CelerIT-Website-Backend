@@ -62,7 +62,7 @@ export class PartnerController extends Controller {
    * @param encryptedID Encrypted participant ID of the scanned participant
    */
   @Post('{id}/scanqr')
-  public async requestScan(id: number, @Body() params: Partial<QRParams>): Promise<void> {
+  public async requestScan(id: number, @Body() params: QRParams): Promise<void> {
     return new PartnerService().requestScan(id, params);
   }
 }
