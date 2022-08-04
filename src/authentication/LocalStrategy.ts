@@ -27,6 +27,7 @@ export function hashPassword(password: string, salt: string) {
 export const localVerification: VerifyFunction = (
   email:string,
   password:string,
+  // eslint-disable-next-line no-unused-vars
   done: (error: any, user?: any, options?: any) => void,
 ) => {
   User.findOne({ where: { email } }).then((user) => {

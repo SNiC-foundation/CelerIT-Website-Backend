@@ -1,6 +1,6 @@
 import { expect, request } from 'chai';
 import { DataSource } from 'typeorm';
-import express, { Express, json } from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import LocalAuthenticatorFactory from '../../database/factories/LocalAuthenticatorFactory';
 import { initializeDataSource } from '../../../src/database/dataSource';

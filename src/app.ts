@@ -62,6 +62,7 @@ function createApp(): void {
     RegisterRoutes(app);
 
     const port = process.env.PORT || 3001;
+    // eslint-disable-next-line no-console
     app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
   });
 }
