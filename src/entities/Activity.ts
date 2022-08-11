@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
-import SubscribeActivity, { SubscribeActivityParams } from './SubscribeActivity';
+import SubscribeActivity, { UpdateSubscribeActivityParams } from './SubscribeActivity';
 // eslint-disable-next-line import/no-cycle
 import Speaker from './Speaker';
 import ProgramPart from './ProgramPart';
@@ -15,7 +15,7 @@ export interface ActivityParams {
   description?: string;
   image?: string;
   speakerId?: number;
-  subscribe?: SubscribeActivityParams;
+  subscribe?: UpdateSubscribeActivityParams;
 }
 
 @Entity()
@@ -46,6 +46,6 @@ export default class Activity extends BaseEnt {
   @JoinColumn({ name: 'speakerId' })
     speaker?: Speaker;
 
-  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'] })
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'], eager: true })
     subscribe?: SubscribeActivity;
 }

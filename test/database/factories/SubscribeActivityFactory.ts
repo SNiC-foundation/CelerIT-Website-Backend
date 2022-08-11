@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
-import SubscribeActivity, { SubscribeActivityParams } from '../../../src/entities/SubscribeActivity';
+import SubscribeActivity, { UpdateSubscribeActivityParams } from '../../../src/entities/SubscribeActivity';
 // import Factory from './Factory';
 import Activity from '../../../src/entities/Activity';
 
@@ -14,7 +14,7 @@ export default class SubscribeActivityFactory { // extends Factory<SubscribeActi
 
   private constructObject(activity: Activity): SubscribeActivity {
     const date = faker.date.future();
-    const params: SubscribeActivityParams = {
+    const params: UpdateSubscribeActivityParams = {
       activityId: activity.id,
       maxParticipants: Math.round(Math.random() * 4 + 1) * 100,
       subscriptionListOpenDate: date,

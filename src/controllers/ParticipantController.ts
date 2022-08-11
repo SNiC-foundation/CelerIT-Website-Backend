@@ -2,7 +2,7 @@ import {
   Controller, Get, Post, Delete, Route, Body, Tags, Put,
 } from 'tsoa';
 import ParticipantService from '../services/ParticipantService';
-import Participant, { ParticipantParams } from '../entities/Participant';
+import Participant, { CreateParticipantParams, UpdateParticipantParams } from '../entities/Participant';
 
 /**
  * TODO: Add paramater validation
@@ -34,7 +34,7 @@ export class ParticipantController extends Controller {
    * @param params Parameters to create participant with
    */
   @Post()
-  public async createParticipant(@Body() params: ParticipantParams): Promise<Participant> {
+  public async createParticipant(@Body() params: CreateParticipantParams): Promise<Participant> {
     return new ParticipantService().createParticipant(params);
   }
 
@@ -46,7 +46,7 @@ export class ParticipantController extends Controller {
   @Put('{id}')
   public async updateParticipant(
     id: number,
-                                 @Body() params: Partial<ParticipantParams>,
+                                 @Body() params: Partial<UpdateParticipantParams>,
   ): Promise<Participant> {
     return new ParticipantService().updateParticipant(id, params);
   }

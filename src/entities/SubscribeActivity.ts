@@ -6,11 +6,14 @@ import BaseEnt from './BaseEnt';
 import Activity from './Activity';
 import User from './User';
 
-export interface SubscribeActivityParams {
-  // activityId: number;
+export interface UpdateSubscribeActivityParams {
   maxParticipants: number;
   subscriptionListOpenDate: Date;
   subscriptionListCloseDate: Date;
+}
+
+export interface CreateSubscribeActivityParams extends UpdateSubscribeActivityParams {
+  activityId: number;
 }
 
 @Entity()

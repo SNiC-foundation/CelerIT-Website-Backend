@@ -2,7 +2,10 @@ import {
   Controller, Get, Post, Delete, Route, Body, Tags, Put,
 } from 'tsoa';
 import SubscribeActivityService from '../services/SubscribeActivityService';
-import SubscribeActivity, { SubscribeActivityParams } from '../entities/SubscribeActivity';
+import SubscribeActivity, {
+  CreateSubscribeActivityParams,
+  UpdateSubscribeActivityParams,
+} from '../entities/SubscribeActivity';
 
 /**
  * TODO: Add paramater validation
@@ -34,7 +37,7 @@ export class SubscribeActivityController extends Controller {
    * @param params Parameters to create subscribeActivity with
    */
   @Post()
-  public async createSubscribeActivity(@Body() params: SubscribeActivityParams): Promise<SubscribeActivity> {
+  public async createSubscribeActivity(@Body() params: CreateSubscribeActivityParams): Promise<SubscribeActivity> {
     return new SubscribeActivityService().createSubscribeActivity(params);
   }
 
@@ -46,7 +49,7 @@ export class SubscribeActivityController extends Controller {
   @Put('{id}')
   public async updateSubscribeActivity(
     id: number,
-    @Body() params: Partial<SubscribeActivityParams>,
+    @Body() params: Partial<UpdateSubscribeActivityParams>,
   ):
       Promise<SubscribeActivity> {
     return new SubscribeActivityService().updateSubscribeActivity(id, params);

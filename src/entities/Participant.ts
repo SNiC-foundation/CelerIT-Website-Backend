@@ -5,11 +5,14 @@ import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
 import User from './User';
 
-export interface ParticipantParams {
+export interface UpdateParticipantParams {
+  studyAssociation: string;
+  studyProgram: string;
+  agreeToSharingWithCompanies: boolean;
+}
+
+export interface CreateParticipantParams extends UpdateParticipantParams {
   userId: number;
-  studyAssociation?: string;
-  studyProgram?: string;
-  agreeToSharingWithCompanies?: boolean;
 }
 
 @Entity()
@@ -17,16 +20,16 @@ export default class Participant extends BaseEnt {
   @Column({ type: 'integer' })
     userId: number;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.participantInfo, { eager: false, cascade: ['insert', 'update'] })
   @JoinColumn({ name: 'userId' })
     user: User;
 
-  @Column({ nullable: true })
-    studyAssociation?: string;
+  @Column()
+    studyAssociation: string;
 
-  @Column({ nullable: true })
-    studyProgram?: string;
+  @Column()
+    studyProgram: string;
 
-  @Column({ nullable: true })
-    agreeToSharingWithCompanies?: boolean;
+  @Column()
+    agreeToSharingWithCompanies: boolean;
 }
