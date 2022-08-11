@@ -27,6 +27,7 @@ export class RootController extends Controller {
    * @param params Parameters to create user with
    */
   @Post('register')
+  @Response<WrappedApiError>(400)
   public async registerUser(@Body() params: RegisterUserParams): Promise<User> {
     const ticket = await new TicketService().getTicketIfValid(params.token);
     if (ticket === null) throw new ApiError(HTTPStatus.BadRequest, 'Invalid Token');

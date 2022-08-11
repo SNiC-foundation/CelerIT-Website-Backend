@@ -59,12 +59,13 @@ export default class AuthService {
       email = '';
     }
     const user = await this.userRepo.findOneBy({ email });
+    // eslint-disable-next-line no-unused-vars
     const identity = user !== undefined
       ? await this.LocalAuthenticatorRepo.findOneBy({ userId: user?.id }) : undefined;
 
-    if (user == null || identity == null) {
-
-    }
+    // if (user == null || identity == null) {
+    //   return;
+    // }
 
     // Mailer.getInstance().send(resetPassword(user, `${process.env.SERVER_HOST}/reset-password?token=${this.getResetPasswordToken(user, identity)}`));
   }

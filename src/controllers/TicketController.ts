@@ -1,7 +1,7 @@
 import {
   Controller, Get, Post, Route, Body, Tags, Query,
 } from 'tsoa';
-import Ticket, { TicketParams } from '../entities/Ticket';
+import Ticket from '../entities/Ticket';
 import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../services/TicketService';
 
 /**
