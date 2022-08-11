@@ -46,7 +46,7 @@ export class ActivityController extends Controller {
   @Put('{id}')
   public async updateActivity(
     id: number, @Body()
-    params: Partial<ActivityParams>,
+    params: ActivityParams,
   ): Promise<Activity> {
     return new ActivityService().updateActivity(id, params);
   }

@@ -7,7 +7,7 @@ import Activity from './Activity';
 import User from './User';
 
 export interface SubscribeActivityParams {
-  activityId: number;
+  // activityId: number;
   maxParticipants: number;
   subscriptionListOpenDate: Date;
   subscriptionListCloseDate: Date;
@@ -18,7 +18,7 @@ export default class SubscribeActivity extends BaseEnt {
   @Column({ type: 'integer' })
     activityId: number;
 
-  @OneToOne(() => Activity)
+  @OneToOne(() => Activity, { cascade: ['insert'] })
   @JoinColumn({ name: 'activityId' })
     activity: Activity;
 
@@ -31,7 +31,7 @@ export default class SubscribeActivity extends BaseEnt {
   @Column()
     subscriptionListCloseDate: Date;
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, { onDelete: 'RESTRICT' })
   @JoinTable()
     subscribers: User[];
 }

@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
 
+import { NextFunction, Request, Response } from 'express';
+import { ValidateError } from '@tsoa/runtime';
+
 // eslint-disable-next-line no-shadow
 export enum HTTPStatus {
     OK = 'OK',
@@ -44,3 +47,25 @@ export class ApiError extends Error {
  * WrappedApiError represents the type returned by the server.
  */
 export type WrappedApiError = { error: ApiError };
+
+export function validationErrorHandler(
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Response | void {
+  if (err instanceof ValidateError) {
+    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+    return res.status(422).json({
+      message: 'Validation Failed',
+      details: err?.fields,
+    });
+  }
+  if (err instanceof Error) {
+    return res.status(500).json({
+      message: 'Internal Server Error',
+    });
+  }
+
+  next();
+}

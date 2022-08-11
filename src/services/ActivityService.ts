@@ -1,20 +1,24 @@
 import { Repository } from 'typeorm';
 import Activity, { ActivityParams } from '../entities/Activity';
 import { getDataSource } from '../database/dataSource';
-import { HTTPStatus, ApiError } from '../helpers/error';
+import { ApiError, HTTPStatus } from '../helpers/error';
+import SubscribeActivity from '../entities/SubscribeActivity';
 
 export default class ActivityService {
-  repo: Repository<Activity>;
+  activityRepo: Repository<Activity>;
+
+  subscribeRepo: Repository<SubscribeActivity>;
 
   constructor(repo?: Repository<Activity>) {
-    this.repo = repo !== undefined ? repo : getDataSource().getRepository(Activity);
+    this.activityRepo = repo !== undefined ? repo : getDataSource().getRepository(Activity);
+    this.subscribeRepo = getDataSource().getRepository(SubscribeActivity);
   }
 
   /**
    * Get all Activities
    */
   public async getAllActivities(): Promise<Activity[]> {
-    return this.repo.find();
+    return this.activityRepo.find({ relations: ['subscribe'] });
   }
 
   /**
@@ -22,7 +26,7 @@ export default class ActivityService {
    * TODO: Add relations in findOne()
    */
   async getActivity(id: number): Promise<Activity> {
-    const activity = await this.repo.findOne({ where: { id } });
+    const activity = await this.activityRepo.findOne({ where: { id }, relations: ['subscribe'] });
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Activity not found');
     }
@@ -32,25 +36,44 @@ export default class ActivityService {
   /**
    * Create Activity
    */
-  createActivity(params: ActivityParams): Promise<Activity> {
+  async createActivity(params: ActivityParams): Promise<Activity> {
     const activity = {
       ...params,
     } as any as Activity;
-    return this.repo.save(activity);
+    let ac = await this.activityRepo.save(activity);
+    if (params.subscribe) {
+      await this.subscribeRepo.save({
+        ...params.subscribe,
+        activityId: ac.id,
+      });
+    }
+    ac = await this.getActivity(activity.id);
+    return ac;
   }
 
   /**
    * Update Activity
    */
-  async updateActivity(id: number, params: Partial<ActivityParams>): Promise<Activity> {
-    await this.repo.update(id, params);
+  async updateActivity(id: number, params: ActivityParams): Promise<Activity> {
+    const { subscribe, ...rest } = params;
+    await this.activityRepo.update(id, rest);
     const activity = await this.getActivity(id);
 
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound);
     }
 
-    return activity;
+    if (activity.subscribe && subscribe) {
+      await this.subscribeRepo.update(activity.subscribe.id, subscribe);
+    } else if (!activity.subscribe && subscribe) {
+      await this.subscribeRepo.save(subscribe);
+    } else if (activity.subscribe && !subscribe) {
+      const subscr = await this.subscribeRepo.findOne({ where: { id: activity.subscribe.id }, relations: ['subscribers'] });
+      if (subscr!.subscribers.length > 0) throw new ApiError(HTTPStatus.BadRequest, 'SubscribeActivity still has subscribers');
+      await this.subscribeRepo.delete(subscr!.id);
+    }
+
+    return this.getActivity(id);
   }
 
   /**
@@ -58,12 +81,12 @@ export default class ActivityService {
    * TODO: Add relations in findOne()
    */
   async deleteActivity(id: number): Promise<void> {
-    const activity = await this.repo.findOne({ where: { id } });
+    const activity = await this.activityRepo.findOne({ where: { id } });
 
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Activity not found');
     }
 
-    await this.repo.delete(activity.id);
+    await this.activityRepo.delete(activity.id);
   }
 }
