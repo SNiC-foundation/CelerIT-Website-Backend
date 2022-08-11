@@ -2,12 +2,16 @@ import faker from '@faker-js/faker';
 import { DataSource } from 'typeorm';
 import User, { UserParams } from '../../../src/entities/User';
 import Factory from './Factory';
+import TicketFactory from './TicketFactory';
 
 export default class UserFactory extends Factory<User> {
   constructor(dataSource: DataSource) {
     super();
     this.repo = dataSource.getRepository(User);
+    this.ticketFactory = new TicketFactory(dataSource);
   }
+
+  private ticketFactory;
 
   private constructObject(): User {
     const params: UserParams = {
@@ -26,8 +30,10 @@ export default class UserFactory extends Factory<User> {
   }
 
   async createSingle(): Promise<User> {
-    const user = this.constructObject();
-    return this.repo.save(user);
+    let user = this.constructObject();
+    user = await this.repo.save(user);
+    await this.ticketFactory.createSingleWithUser(user);
+    return user;
   }
 
   createMultiple(amount: number): Promise<User[]> {
@@ -37,6 +43,8 @@ export default class UserFactory extends Factory<User> {
       users.push(this.constructObject());
     }
 
-    return this.repo.save(users);
+    return this.repo.save(users).then(() => Promise.all(users.map(
+      (u) => this.ticketFactory.createSingleWithUser(u),
+    )).then(() => users));
   }
 }

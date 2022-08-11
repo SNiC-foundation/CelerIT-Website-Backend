@@ -1,7 +1,10 @@
 import { Repository } from 'typeorm';
+import faker from '@faker-js/faker';
+import crypto from 'crypto';
 import User, { UserParams } from '../entities/User';
 import { HTTPStatus, ApiError } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
+import Ticket from '../entities/Ticket';
 
 export default class UserService {
   repo: Repository<User>;
@@ -37,6 +40,22 @@ export default class UserService {
       ...params,
     } as any as User;
     return this.repo.save(user);
+  }
+
+  /**
+   * Register User with a Ticket
+   */
+  async registerUser(params: UserParams, ticket: Ticket): Promise<User> {
+    return Promise.resolve(getDataSource().manager.transaction((manager) => {
+      const user = Object.assign(new User(), {
+        ...params,
+      }) as User;
+      return manager.save(user).then((u) => {
+        // eslint-disable-next-line no-param-reassign
+        ticket.user = u;
+        return manager.save(ticket).then(() => u);
+      });
+    }));
   }
 
   /**

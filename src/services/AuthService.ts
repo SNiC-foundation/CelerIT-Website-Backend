@@ -54,19 +54,18 @@ export default class AuthService {
 
   // eslint-disable-next-line no-unused-vars
   async forgotPassword(userEmail: string): Promise<void> {
-    // let email = validator.normalizeEmail(userEmail);
-    // if (email === false) {
-    //   email = '';
-    // }
-    // const user = await this.userRepo.findOneBy({ email });
-    // const identity = user !== undefined
-    //   ? await this.LocalAuthenticatorRepo.findOneBy({ userId: user?.id }) : undefined;
-    //
-    // if (user == null || identity == null) {
-    //   return;
-    // }
+    let email = validator.normalizeEmail(userEmail);
+    if (email === false) {
+      email = '';
+    }
+    const user = await this.userRepo.findOneBy({ email });
+    const identity = user !== undefined
+      ? await this.LocalAuthenticatorRepo.findOneBy({ userId: user?.id }) : undefined;
 
-    // eslint-disable-next-line max-len
+    if (user == null || identity == null) {
+
+    }
+
     // Mailer.getInstance().send(resetPassword(user, `${process.env.SERVER_HOST}/reset-password?token=${this.getResetPasswordToken(user, identity)}`));
   }
 
