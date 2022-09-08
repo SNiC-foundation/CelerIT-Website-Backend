@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import Participant, { ParticipantParams } from '../entities/Participant';
+import Participant, { CreateParticipantParams, UpdateParticipantParams } from '../entities/Participant';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
@@ -32,7 +32,7 @@ export default class ParticipantService {
   /**
    * Create Participant
    */
-  createParticipant(params: ParticipantParams): Promise<Participant> {
+  createParticipant(params: CreateParticipantParams): Promise<Participant> {
     const participant = {
       ...params,
     } as any as Participant;
@@ -42,7 +42,7 @@ export default class ParticipantService {
   /**
    * Update Participant
    */
-  async updateParticipant(id: number, params: Partial<ParticipantParams>): Promise<Participant> {
+  async updateParticipant(id: number, params: Partial<UpdateParticipantParams>): Promise<Participant> {
     await this.repo.update(id, params);
     const participant = await this.getParticipant(id);
 

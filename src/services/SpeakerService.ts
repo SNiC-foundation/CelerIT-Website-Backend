@@ -1,7 +1,10 @@
 import { Repository } from 'typeorm';
+import { Put, UploadedFile } from 'tsoa';
+import { Express } from 'express';
 import Speaker, { SpeakerParams } from '../entities/Speaker';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
+import FileService from './FileService';
 
 export default class SpeakerService {
   repo: Repository<Speaker>;
@@ -65,5 +68,13 @@ export default class SpeakerService {
     }
 
     await this.repo.delete(speaker.id);
+  }
+
+  /**
+   * Upload an image for a speaker
+   */
+  @Put('{id}/image')
+  public async uploadSpeakerImage(@UploadedFile() logo: Express.Multer.File, id: number) {
+    await FileService.uploadSpeakerImage(logo, id);
   }
 }

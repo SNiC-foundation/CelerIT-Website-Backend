@@ -1,5 +1,8 @@
 import { Repository } from 'typeorm';
-import SubscribeActivity, { SubscribeActivityParams } from '../entities/SubscribeActivity';
+import SubscribeActivity, {
+  CreateSubscribeActivityParams,
+  UpdateSubscribeActivityParams,
+} from '../entities/SubscribeActivity';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
@@ -32,7 +35,7 @@ export default class SubscribeActivityService {
   /**
    * Create SubscribeActivity
    */
-  createSubscribeActivity(params: SubscribeActivityParams): Promise<SubscribeActivity> {
+  createSubscribeActivity(params: CreateSubscribeActivityParams): Promise<SubscribeActivity> {
     const subscribeActivity = {
       ...params,
     } as any as SubscribeActivity;
@@ -44,7 +47,7 @@ export default class SubscribeActivityService {
    */
   async updateSubscribeActivity(
     id: number,
-    params: Partial<SubscribeActivityParams>,
+    params: Partial<UpdateSubscribeActivityParams>,
   ):
       Promise<SubscribeActivity> {
     await this.repo.update(id, params);

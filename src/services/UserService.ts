@@ -2,6 +2,7 @@ import { Repository } from 'typeorm';
 import User, { UserParams } from '../entities/User';
 import { HTTPStatus, ApiError } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
+import ParticipantService from './ParticipantService';
 
 export default class UserService {
   repo: Repository<User>;
@@ -43,14 +44,26 @@ export default class UserService {
    * Update User
    */
   async updateUser(id: number, params: Partial<UserParams>): Promise<User> {
-    await this.repo.update(id, params);
+    const { participantInfo, ...rest } = params;
+    await this.repo.update(id, rest);
     const user = await this.getUser(id);
 
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound);
     }
 
-    return user;
+    if (user.participantInfo && participantInfo) {
+      await new ParticipantService().updateParticipant(user.participantInfo.id, participantInfo);
+    } else if (!user.participantInfo && participantInfo) {
+      await new ParticipantService().createParticipant({
+        ...participantInfo,
+        userId: user.id,
+      });
+    } else if (user.participantInfo && !participantInfo) {
+      await new ParticipantService().deleteParticipant(user.participantInfo.id);
+    }
+
+    return this.getUser(id);
   }
 
   /**
@@ -62,6 +75,10 @@ export default class UserService {
 
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
+    }
+
+    if (user.participantInfo != null) {
+      await new ParticipantService().deleteParticipant(user.participantInfo.id);
     }
 
     await this.repo.delete(user.id);

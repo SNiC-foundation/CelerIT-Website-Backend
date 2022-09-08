@@ -4,13 +4,14 @@ import {
 import BaseEnt from './BaseEnt';
 import Role from './Role';
 // eslint-disable-next-line import/no-cycle
-import Participant from './Participant';
+import Participant, { UpdateParticipantParams } from './Participant';
 
 export interface UserParams {
   email: string;
   name: string;
   dietaryWishes: string;
   agreeToPrivacyPolicy: boolean;
+  participantInfo?: UpdateParticipantParams;
 }
 
 @Entity()
@@ -27,8 +28,8 @@ export default class User extends BaseEnt {
   @Column()
     agreeToPrivacyPolicy: boolean;
 
-  @OneToOne(() => Participant, (participant) => participant.user)
-    participantInfo: Participant;
+  @OneToOne(() => Participant, (participant) => participant.user, { nullable: true, eager: true, cascade: ['insert', 'update', 'remove'] })
+    participantInfo?: Participant;
 
   @ManyToMany(() => Role)
   @JoinTable()

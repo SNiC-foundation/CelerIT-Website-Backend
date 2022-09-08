@@ -18,4 +18,7 @@ export default class Speaker extends BaseEnt {
 
   @OneToMany(() => Activity, (act) => act.speaker, { nullable: true })
     activities: Activity[];
+
+  @Column({ nullable: true })
+    imageFilename?: string;
 }
