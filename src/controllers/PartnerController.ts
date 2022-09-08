@@ -1,8 +1,10 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile,
 } from 'tsoa';
+import { Express } from 'express';
 import PartnerService from '../services/PartnerService';
 import Partner, { PartnerParams } from '../entities/Partner';
+import FileService from '../services/FileService';
 
 /**
  * TODO: Add paramater validation
@@ -55,5 +57,13 @@ export class PartnerController extends Controller {
   @Delete('{id}')
   public async deletePartner(id: number): Promise<void> {
     return new PartnerService().deletePartner(id);
+  }
+
+  /**
+   * Upload a logo for a partner
+   */
+  @Put('{id}/logo')
+  public async uploadPartnerLogo(@UploadedFile() logo: Express.Multer.File, id: number) {
+    await FileService.uploadPartnerLogo(logo, id);
   }
 }
