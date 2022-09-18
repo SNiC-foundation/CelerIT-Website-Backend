@@ -1,10 +1,11 @@
-import { Repository } from 'typeorm';
-import { Put, UploadedFile } from 'tsoa';
-import { Express } from 'express';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import Speaker, { SpeakerParams } from '../entities/Speaker';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
-import FileService from './FileService';
+
+interface FindSpeakerParams {
+  returnActivities?: boolean;
+}
 
 export default class SpeakerService {
   repo: Repository<Speaker>;
@@ -16,16 +17,27 @@ export default class SpeakerService {
   /**
    * Get all Speakers
    */
-  public async getAllSpeakers(): Promise<Speaker[]> {
-    return this.repo.find();
+  public async getAllSpeakers(params?: FindSpeakerParams): Promise<Speaker[]> {
+    const relations: FindOptionsRelations<Speaker> = {
+      activities: params && params.returnActivities ? {
+        programPart: true,
+      } : undefined,
+    };
+    return this.repo.find({ relations });
   }
 
   /**
    * Get one Speaker
    * TODO: Add relations in findOne()
    */
-  async getSpeaker(id: number): Promise<Speaker> {
-    const speaker = await this.repo.findOne({ where: { id } });
+  async getSpeaker(id: number, params?: FindSpeakerParams): Promise<Speaker> {
+    const relations: FindOptionsRelations<Speaker> = {
+      activities: params && params.returnActivities ? {
+        programPart: true,
+      } : undefined,
+    };
+
+    const speaker = await this.repo.findOne({ where: { id }, relations });
     if (speaker == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Speaker not found');
     }
@@ -68,13 +80,5 @@ export default class SpeakerService {
     }
 
     await this.repo.delete(speaker.id);
-  }
-
-  /**
-   * Upload an image for a speaker
-   */
-  @Put('{id}/image')
-  public async uploadSpeakerImage(@UploadedFile() logo: Express.Multer.File, id: number) {
-    await FileService.uploadSpeakerImage(logo, id);
   }
 }
