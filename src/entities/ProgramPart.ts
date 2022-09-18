@@ -4,12 +4,16 @@ import {
 import BaseEnt from './BaseEnt';
 
 export interface ProgramPartParams {
+  name: string;
   beginTime: Date;
   endTime: Date;
 }
 
 @Entity()
 export default class ProgramPart extends BaseEnt {
+  @Column()
+    name: string;
+
   @Column()
     beginTime: Date;
 

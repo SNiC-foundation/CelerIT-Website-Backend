@@ -1,7 +1,9 @@
 import { Repository } from 'typeorm';
 import Activity, { ActivityParams } from '../entities/Activity';
 import { getDataSource } from '../database/dataSource';
-import { HTTPStatus, ApiError } from '../helpers/error';
+import { ApiError, HTTPStatus } from '../helpers/error';
+import SubscribeActivity from '../entities/SubscribeActivity';
+import SubscribeActivityService from './SubscribeActivityService';
 
 export default class ActivityService {
   repo: Repository<Activity>;
@@ -32,25 +34,41 @@ export default class ActivityService {
   /**
    * Create Activity
    */
-  createActivity(params: ActivityParams): Promise<Activity> {
+  async createActivity(params: ActivityParams): Promise<Activity> {
     const activity = {
       ...params,
     } as any as Activity;
-    return this.repo.save(activity);
+    let ac = await this.repo.save(activity);
+    ac = await this.getActivity(activity.id);
+    return ac;
   }
 
   /**
    * Update Activity
    */
-  async updateActivity(id: number, params: Partial<ActivityParams>): Promise<Activity> {
-    await this.repo.update(id, params);
+  async updateActivity(id: number, params: ActivityParams): Promise<Activity> {
+    const { subscribe, ...rest } = params;
+    await this.repo.update(id, rest);
     const activity = await this.getActivity(id);
 
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound);
     }
 
-    return activity;
+    if (activity.subscribe && subscribe) {
+      await new SubscribeActivityService()
+        .updateSubscribeActivity(activity.subscribe.id, subscribe);
+    } else if (!activity.subscribe && subscribe) {
+      await new SubscribeActivityService()
+        .createSubscribeActivity({
+          ...subscribe,
+          activityId: activity.id,
+        });
+    } else if (activity.subscribe && !subscribe) {
+      await new SubscribeActivityService().deleteSubscribeActivity(activity.subscribe.id);
+    }
+
+    return this.getActivity(id);
   }
 
   /**
@@ -62,6 +80,10 @@ export default class ActivityService {
 
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Activity not found');
+    }
+
+    if (activity.subscribe != null) {
+      await new SubscribeActivityService().deleteSubscribeActivity(activity.subscribe.id);
     }
 
     await this.repo.delete(activity.id);

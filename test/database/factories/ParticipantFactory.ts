@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
-import Participant, { ParticipantParams } from '../../../src/entities/Participant';
+import Participant, { UpdateParticipantParams } from '../../../src/entities/Participant';
 // import Factory from './Factory';
 import User from '../../../src/entities/User';
 
@@ -18,7 +18,7 @@ export default class ParticipantFactory { // extends Factory<Participant> {
       randAgree,
     ] = [0, 0, 0].map(() => (randomFill ? Math.random() < 0.5 : false));
 
-    const params: ParticipantParams = {
+    const params: UpdateParticipantParams = {
       userId: user.id,
       studyAssociation: randAssoc ? `${faker.name.middleName()}  ${faker.animal.snake()}` : undefined,
       studyProgram: randProgram ? faker.vehicle.model() : undefined,
