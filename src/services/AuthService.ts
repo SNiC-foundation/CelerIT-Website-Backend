@@ -49,10 +49,9 @@ export default class AuthService {
   }
 
   async logout(req: express.Request) : Promise<void> {
-    req.logout();
+    return req.logout(() => {});
   }
 
-  // eslint-disable-next-line no-unused-vars
   async forgotPassword(userEmail: string): Promise<void> {
     let email = validator.normalizeEmail(userEmail);
     if (email === false) {

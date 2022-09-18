@@ -43,11 +43,23 @@ export default class TicketService {
   }
 
   /**
+   * Get single ticket with the given code
+   * @param code
+   */
+  getSingleTicket(code: string): Promise<Ticket | null> {
+    return this.repo.findOne({ where: { code } });
+  }
+
+  /**
    * Checks if the given code corresponds to an unclaimed Ticket
    * @param code
    */
   async getTicketIfValid(code: string): Promise<Ticket | null> {
-    return this.repo.findOne({ where: { code, userId: IsNull() } });
+    const ticket = await this.getSingleTicket(code);
+    if (ticket == null || ticket.userId != null) {
+      return null;
+    }
+    return ticket;
   }
 
   async createTicket(params: TicketParams): Promise<Ticket> {

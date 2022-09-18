@@ -3,8 +3,8 @@ import {
 } from 'tsoa';
 import SubscribeActivityService from '../services/SubscribeActivityService';
 import SubscribeActivity, {
-  CreateSubscribeActivityParams,
   UpdateSubscribeActivityParams,
+  CreateSubscribeActivityParams,
 } from '../entities/SubscribeActivity';
 
 /**
@@ -37,7 +37,7 @@ export class SubscribeActivityController extends Controller {
    * @param params Parameters to create subscribeActivity with
    */
   @Post()
-  public async createSubscribeActivity(@Body() params: SubscribeActivityParams)
+  public async createSubscribeActivity(@Body() params: CreateSubscribeActivityParams)
       : Promise<SubscribeActivity> {
     return new SubscribeActivityService().createSubscribeActivity(params);
   }

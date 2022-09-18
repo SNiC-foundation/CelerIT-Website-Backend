@@ -3,14 +3,15 @@ import {
 } from 'tsoa';
 import express from 'express';
 import { ApiError, HTTPStatus, WrappedApiError } from '../helpers/error';
-import User, { UserParams } from '../entities/User';
+import User, { CreateParticipantUserParams } from '../entities/User';
 import AuthService from '../services/AuthService';
 import UserService from '../services/UserService';
 import TicketService from '../services/TicketService';
 
 export interface RegisterUserParams {
-  user: UserParams,
+  user: CreateParticipantUserParams,
   token: string,
+  password: string,
 }
 
 @Route('')
@@ -31,7 +32,13 @@ export class RootController extends Controller {
   public async registerUser(@Body() params: RegisterUserParams): Promise<User> {
     const ticket = await new TicketService().getTicketIfValid(params.token);
     if (ticket === null) throw new ApiError(HTTPStatus.BadRequest, 'Invalid Token');
-    return new UserService().registerUser(params.user, ticket);
+    return new UserService().registerUser({
+      ...params.user,
+      participantInfo: {
+        ...params.user.participantInfo,
+        studyAssociation: ticket.association,
+      },
+    }, ticket);
   }
 
   @Get('profile')

@@ -10,11 +10,11 @@ import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../ser
 @Route('ticket')
 @Tags('Ticket')
 export class TicketController extends Controller {
-    /**
-     * getAllTickets() - retrieve all tickets
-     * TODO: Add filter options
-     */
-    @Get('')
+  /**
+   * getAllTickets() - retrieve all tickets
+   * TODO: Add filter options
+   */
+  @Get('')
   public async getAllTickets(@Query() claimed?: boolean, @Query() association?: string)
         : Promise<Ticket[]> {
     const filters: TicketFilterParameters = {
@@ -24,14 +24,19 @@ export class TicketController extends Controller {
     return new TicketService().getAllTickets(filters);
   }
 
-    /**
-     * createTicket() - create ticket
-     * @param params Parameters to create tickets with
-     */
-    @Post()
-    public async createTicket(@Body() params: CreateTicketPrams): Promise<Ticket[]> {
-      return new TicketService().createTickets(params);
-    }
+  @Get('{code}')
+  public async getSingleTicket(code: string): Promise<Ticket | null> {
+    return new TicketService().getSingleTicket(code);
+  }
+
+  /**
+   * createTicket() - create ticket
+   * @param params Parameters to create tickets with
+   */
+  @Post()
+  public async createTicket(@Body() params: CreateTicketPrams): Promise<Ticket[]> {
+    return new TicketService().createTickets(params);
+  }
 
   // /**
   //  * updateUser() - update user

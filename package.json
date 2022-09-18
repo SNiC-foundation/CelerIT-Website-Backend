@@ -48,7 +48,7 @@
     "swagger-ui-express": "^4.3.0",
     "tsoa": "^3.14.1",
     "typeorm": "^0.3.6",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
