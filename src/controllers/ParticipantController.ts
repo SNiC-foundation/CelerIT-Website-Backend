@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
 } from 'tsoa';
 import ParticipantService from '../services/ParticipantService';
 import Participant, { CreateParticipantParams, UpdateParticipantParams } from '../entities/Participant';
@@ -16,6 +16,7 @@ export class ParticipantController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
+  @Security('local')
   public async getAllParticipants(): Promise<Participant[]> {
     return new ParticipantService().getAllParticipants();
   }
@@ -25,6 +26,7 @@ export class ParticipantController extends Controller {
    * @param id ID of participant to retrieve
    */
   @Get('{id}')
+  @Security('local')
   public async getParticipant(id: number): Promise<Participant> {
     return new ParticipantService().getParticipant(id);
   }
@@ -34,6 +36,7 @@ export class ParticipantController extends Controller {
    * @param params Parameters to create participant with
    */
   @Post()
+  @Security('local')
   public async createParticipant(@Body() params: CreateParticipantParams): Promise<Participant> {
     return new ParticipantService().createParticipant(params);
   }
@@ -44,6 +47,7 @@ export class ParticipantController extends Controller {
    * @param params Update subset of parameter of participant
    */
   @Put('{id}')
+  @Security('local')
   public async updateParticipant(
     id: number,
                                  @Body() params: Partial<UpdateParticipantParams>,
@@ -56,6 +60,7 @@ export class ParticipantController extends Controller {
    * @param id ID of the participant to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deleteParticipant(id: number): Promise<void> {
     return new ParticipantService().deleteParticipant(id);
   }

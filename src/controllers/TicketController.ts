@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Route, Body, Tags, Query,
+  Controller, Get, Post, Route, Body, Tags, Query, Security,
 } from 'tsoa';
 import Ticket from '../entities/Ticket';
 import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../services/TicketService';
@@ -15,6 +15,7 @@ export class TicketController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
+  @Security('local')
   public async getAllTickets(@Query() claimed?: boolean, @Query() association?: string)
         : Promise<Ticket[]> {
     const filters: TicketFilterParameters = {
@@ -34,6 +35,7 @@ export class TicketController extends Controller {
    * @param params Parameters to create tickets with
    */
   @Post()
+  @Security('local')
   public async createTicket(@Body() params: CreateTicketPrams): Promise<Ticket[]> {
     return new TicketService().createTickets(params);
   }
