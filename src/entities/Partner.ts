@@ -18,7 +18,8 @@ export interface PartnerParams {
   name: string;
   location: string;
   specialization: string;
-  description: string;
+  shortDescription?: string;
+  description?: string;
   url: string;
   package: SponsorPackage;
 }
@@ -34,8 +35,11 @@ export default class Partner extends BaseEnt {
   @Column()
     specialization: string;
 
-  @Column()
-    description: string;
+  @Column({ nullable: true })
+    shortDescription?: string;
+
+  @Column({ nullable: true })
+    description?: string;
 
   @Column()
     url: string;

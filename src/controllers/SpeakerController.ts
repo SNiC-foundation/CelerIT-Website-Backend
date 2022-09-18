@@ -1,8 +1,10 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile, Query,
 } from 'tsoa';
+import { Express } from 'express';
 import SpeakerService from '../services/SpeakerService';
 import Speaker, { SpeakerParams } from '../entities/Speaker';
+import FileService from '../services/FileService';
 
 /**
  * TODO: Add paramater validation
@@ -16,17 +18,18 @@ export class SpeakerController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
-  public async getAllSpeakers(): Promise<Speaker[]> {
-    return new SpeakerService().getAllSpeakers();
+  public async getAllSpeakers(@Query() activities?: boolean): Promise<Speaker[]> {
+    return new SpeakerService().getAllSpeakers({ returnActivities: activities });
   }
 
   /**
    * getSpeaker() - get single speaker by id
    * @param id ID of speaker to retrieve
+   * @param activities
    */
   @Get('{id}')
-  public async getSpeaker(id: number): Promise<Speaker> {
-    return new SpeakerService().getSpeaker(id);
+  public async getSpeaker(id: number, @Query() activities?: boolean): Promise<Speaker> {
+    return new SpeakerService().getSpeaker(id, { returnActivities: activities });
   }
 
   /**
@@ -55,5 +58,13 @@ export class SpeakerController extends Controller {
   @Delete('{id}')
   public async deleteSpeaker(id: number): Promise<void> {
     return new SpeakerService().deleteSpeaker(id);
+  }
+
+  /**
+   * Upload an image for a speaker
+   */
+  @Put('{id}/image')
+  public async uploadSpeakerImage(@UploadedFile() logo: Express.Multer.File, id: number) {
+    await FileService.uploadSpeakerImage(logo, id);
   }
 }
