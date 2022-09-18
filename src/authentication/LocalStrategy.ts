@@ -42,7 +42,7 @@ export const localVerification: VerifyFunction = (
       }
 
       const hashedPassword = hashPassword(password, auth.salt);
-      if (!crypto.timingSafeEqual(Buffer.from(auth.hash), Buffer.from(hashedPassword))) {
+      if (!crypto.timingSafeEqual(Buffer.from(auth.hash || ''), Buffer.from(hashedPassword))) {
         return done(null, false, { message: 'Incorrect username or password.' });
       }
       return done(null, auth);

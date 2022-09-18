@@ -23,8 +23,8 @@ export default class LocalAuthenticator extends BaseEntWithoutId {
   @Column()
     verifiedEmail!: boolean;
 
-  @Column()
-    hash: string;
+  @Column({ nullable: true })
+    hash?: string;
 
   @Column()
     salt: string;

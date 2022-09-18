@@ -8,10 +8,20 @@ import LocalAuthenticator from '../entities/Authentication/LocalAuthenticator';
 import { generateSalt, hashPassword } from '../authentication/LocalStrategy';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
+import { Mailer, PasswordReset, WelcomeWithReset } from '../mailer';
 
 const INVALID_TOKEN = 'Invalid token.';
 export interface AuthStatus {
     authenticated: boolean;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
 }
 
 export default class AuthService {
@@ -38,18 +48,17 @@ export default class AuthService {
   }
 
   async getProfile(req: express.Request): Promise<User | null> {
-    const user = (await this.userRepo.findOne(
+    return this.userRepo.findOne(
       {
         where: { id: (req.user as User).id },
         relations: ['roles'],
       },
-    ));
-
-    return user;
+    );
   }
 
+  // TODO: Fix logout not working correctly
   async logout(req: express.Request) : Promise<void> {
-    return req.logout(() => {});
+    return req.logout({ keepSessionInfo: false }, () => {});
   }
 
   async forgotPassword(userEmail: string): Promise<void> {
@@ -62,11 +71,15 @@ export default class AuthService {
     const identity = user !== undefined
       ? await this.LocalAuthenticatorRepo.findOneBy({ userId: user?.id }) : undefined;
 
-    // if (user == null || identity == null) {
-    //   return;
-    // }
+    if (user == null || identity == null) {
+      return;
+    }
 
-    // Mailer.getInstance().send(resetPassword(user, `${process.env.SERVER_HOST}/reset-password?token=${this.getResetPasswordToken(user, identity)}`));
+    Mailer.getInstance().send(user, new PasswordReset({
+      name: user.name,
+      email: user.email,
+      token: this.getResetPasswordToken(user, identity),
+    }));
   }
 
   async createIdentityLocal(user: User, silent: boolean): Promise<LocalAuthenticator> {
@@ -83,8 +96,11 @@ export default class AuthService {
     identity = (await this.LocalAuthenticatorRepo.findOneBy({ userId: user.id }))!;
 
     if (!silent) {
-      // eslint-disable-next-line max-len
-      // Mailer.getInstance().send(newUser(user, `${process.env.SERVER_HOST}/reset-password?token=${this.getSetPasswordToken(user, identity)}`));
+      Mailer.getInstance().send(user, new WelcomeWithReset({
+        name: user.name,
+        email: user.email,
+        token: this.getSetPasswordToken(user, identity),
+      }));
     }
 
     return identity!;
