@@ -15,4 +15,4 @@ ENV NODE_ENV production
 RUN npm run tsoa && npm run build
 EXPOSE 3001
 
-CMD ["pm2-runtime","/usr/src/app/dist/index.js"]
+CMD ["pm2-runtime","/usr/src/app/build/src/index.js"]

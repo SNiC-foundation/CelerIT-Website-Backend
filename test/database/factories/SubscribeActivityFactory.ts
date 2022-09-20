@@ -15,7 +15,6 @@ export default class SubscribeActivityFactory { // extends Factory<SubscribeActi
   private constructObject(activity: Activity): SubscribeActivity {
     const date = faker.date.future();
     const params: UpdateSubscribeActivityParams = {
-      activityId: activity.id,
       maxParticipants: Math.round(Math.random() * 4 + 1) * 100,
       subscriptionListOpenDate: date,
       subscriptionListCloseDate: new Date(date.setHours(
@@ -24,7 +23,7 @@ export default class SubscribeActivityFactory { // extends Factory<SubscribeActi
     };
 
     const subscribeActivity = new SubscribeActivity();
-    subscribeActivity.activityId = params.activityId;
+    subscribeActivity.activityId = activity.id;
     subscribeActivity.maxParticipants = params.maxParticipants;
     subscribeActivity.subscriptionListOpenDate = params.subscriptionListOpenDate;
     subscribeActivity.subscriptionListCloseDate = params.subscriptionListCloseDate;

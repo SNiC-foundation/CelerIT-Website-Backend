@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { DataSource, Repository } from 'typeorm';
-import Partner, { PartnerParams } from '../../../src/entities/Partner';
+import Partner, { PartnerParams, SponsorPackage } from '../../../src/entities/Partner';
 // import Factory from './Factory';
 
 export default class PartnerFactory { // extends Factory<Partner> {
@@ -22,6 +22,7 @@ export default class PartnerFactory { // extends Factory<Partner> {
       specialization: `${faker.word.adjective()} ${faker.word.noun()}`,
       description: faker.random.words(10),
       url: `www.${faker.vehicle.fuel().toLowerCase()}.com`,
+      package: SponsorPackage.BRONZE,
     };
 
     const partner = new Partner();

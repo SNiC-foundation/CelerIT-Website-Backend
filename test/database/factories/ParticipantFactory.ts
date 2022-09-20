@@ -13,20 +13,18 @@ export default class ParticipantFactory { // extends Factory<Participant> {
   }
 
   private constructObject(user: User, randomFill: boolean): Participant {
-    const [randAssoc,
-      randProgram,
+    const [
       randAgree,
-    ] = [0, 0, 0].map(() => (randomFill ? Math.random() < 0.5 : false));
+    ] = [0].map(() => (randomFill ? Math.random() < 0.5 : false));
 
     const params: UpdateParticipantParams = {
-      userId: user.id,
-      studyAssociation: randAssoc ? `${faker.name.middleName()}  ${faker.animal.snake()}` : undefined,
-      studyProgram: randProgram ? faker.vehicle.model() : undefined,
+      studyAssociation: `${faker.name.middleName()}  ${faker.animal.snake()}`,
+      studyProgram: faker.vehicle.model(),
       agreeToSharingWithCompanies: randAgree,
     };
 
     const participant = new Participant();
-    participant.userId = params.userId;
+    participant.userId = user.id;
     participant.studyAssociation = params.studyAssociation;
     participant.studyProgram = params.studyProgram;
     participant.agreeToSharingWithCompanies = params.agreeToSharingWithCompanies;
