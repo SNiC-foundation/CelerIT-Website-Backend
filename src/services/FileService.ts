@@ -28,7 +28,7 @@ export default class FileService {
     }
 
     const fileExtension = mime.getExtension(file.mimetype) || '';
-    if (!['jpg', 'jpeg', 'png', 'bmp', 'gif', 'webp'].includes(fileExtension)) {
+    if (!['jpg', 'jpeg', 'png', 'bmp', 'gif', 'webp', 'svg'].includes(fileExtension)) {
       throw new ApiError(HTTPStatus.BadRequest, 'Partner logo needs to be an image file');
     }
 

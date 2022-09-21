@@ -57,7 +57,7 @@ export default class WelcomeWithReset extends MailTemplate<WelcomeWithResetOptio
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.url;
+      opt.url = process.env.SERVER_HOST;
     }
     super(opt, welcomeWithReset);
   }
