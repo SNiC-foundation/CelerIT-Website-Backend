@@ -11,7 +11,7 @@ export interface LocalAuthenticatorParams {
   salt: string;
 }
 
-@Entity('LocalAuthenticator')
+@Entity()
 export default class LocalAuthenticator extends BaseEntWithoutId {
   @PrimaryColumn('uuid')
   public userId: number;

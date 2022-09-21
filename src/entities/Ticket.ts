@@ -8,7 +8,7 @@ export interface TicketParams {
     association: string;
 }
 
-@Entity('Ticket')
+@Entity()
 export default class Ticket extends BaseEnt {
     @Column({ type: 'integer', nullable: true })
       userId: number;
