@@ -1,10 +1,10 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
 } from 'tsoa';
 import SubscribeActivityService from '../services/SubscribeActivityService';
 import SubscribeActivity, {
-  CreateSubscribeActivityParams,
   UpdateSubscribeActivityParams,
+  CreateSubscribeActivityParams,
 } from '../entities/SubscribeActivity';
 
 /**
@@ -37,7 +37,9 @@ export class SubscribeActivityController extends Controller {
    * @param params Parameters to create subscribeActivity with
    */
   @Post()
-  public async createSubscribeActivity(@Body() params: CreateSubscribeActivityParams): Promise<SubscribeActivity> {
+  @Security('local')
+  public async createSubscribeActivity(@Body() params: CreateSubscribeActivityParams)
+      : Promise<SubscribeActivity> {
     return new SubscribeActivityService().createSubscribeActivity(params);
   }
 
@@ -47,6 +49,7 @@ export class SubscribeActivityController extends Controller {
    * @param params Update subset of parameter of subscribeActivity
    */
   @Put('{id}')
+  @Security('local')
   public async updateSubscribeActivity(
     id: number,
     @Body() params: Partial<UpdateSubscribeActivityParams>,
@@ -60,6 +63,7 @@ export class SubscribeActivityController extends Controller {
    * @param id ID of the subscribeActivity to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deleteSubscribeActivity(id: number): Promise<void> {
     return new SubscribeActivityService().deleteSubscribeActivity(id);
   }

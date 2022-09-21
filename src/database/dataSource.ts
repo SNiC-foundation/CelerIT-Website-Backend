@@ -33,6 +33,11 @@ export async function initializeDataSource(): Promise<DataSource> {
     synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
     logging: process.env.TYPEORM_LOGGING === 'true',
     migrationsRun: false,
+    extra: {
+      authPlugins: {
+        mysql_clear_password: () => () => Buffer.from(`${process.env.TYPEORM_PASSWORD}\0`),
+      },
+    },
   };
 
   if (process.env.NODE_ENV === 'production') {

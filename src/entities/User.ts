@@ -6,6 +6,17 @@ import Role from './Role';
 // eslint-disable-next-line import/no-cycle
 import Participant, { UpdateParticipantParams } from './Participant';
 
+export interface CreateParticipantUserParams {
+  email: string;
+  name: string;
+  dietaryWishes: string;
+  agreeToPrivacyPolicy: boolean;
+  participantInfo: {
+    studyProgram: string;
+    agreeToSharingWithCompanies: boolean;
+  }
+}
+
 export interface UserParams {
   email: string;
   name: string;

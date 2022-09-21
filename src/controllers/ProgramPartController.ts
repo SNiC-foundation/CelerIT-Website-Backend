@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
 } from 'tsoa';
 import ProgramPartService from '../services/ProgramPartService';
 import ProgramPart, { ProgramPartParams } from '../entities/ProgramPart';
@@ -34,6 +34,7 @@ export class ProgramPartController extends Controller {
    * @param params Parameters to create programPart with
    */
   @Post()
+  @Security('local')
   public async createProgramPart(@Body() params: ProgramPartParams): Promise<ProgramPart> {
     return new ProgramPartService().createProgramPart(params);
   }
@@ -44,6 +45,7 @@ export class ProgramPartController extends Controller {
    * @param params Update subset of parameter of programPart
    */
   @Put('{id}')
+  @Security('local')
   public async updateProgramPart(id: number, @Body() params: Partial<ProgramPartParams>):
       Promise<ProgramPart> {
     return new ProgramPartService().updateProgramPart(id, params);
@@ -54,6 +56,7 @@ export class ProgramPartController extends Controller {
    * @param id ID of the programPart to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deleteProgramPart(id: number): Promise<void> {
     return new ProgramPartService().deleteProgramPart(id);
   }

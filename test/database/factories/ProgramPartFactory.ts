@@ -12,6 +12,7 @@ export default class ProgramPartFactory extends Factory<ProgramPart> {
   private constructObject(): ProgramPart {
     const date = faker.date.future();
     const params: ProgramPartParams = {
+      name: faker.word.noun(),
       beginTime: date,
       endTime: new Date(date.setHours(date.getHours() + 1 + Math.round(Math.random() * 5))),
     };

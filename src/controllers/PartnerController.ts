@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile, Security,
 } from 'tsoa';
 import { Express } from 'express';
 import PartnerService from '../services/PartnerService';
@@ -36,6 +36,7 @@ export class PartnerController extends Controller {
    * @param params Parameters to create partner with
    */
   @Post()
+  @Security('local')
   public async createPartner(@Body() params: PartnerParams): Promise<Partner> {
     return new PartnerService().createPartner(params);
   }
@@ -46,6 +47,7 @@ export class PartnerController extends Controller {
    * @param params Update subset of parameter of partner
    */
   @Put('{id}')
+  @Security('local')
   public async updatePartner(id: number, @Body() params: Partial<PartnerParams>): Promise<Partner> {
     return new PartnerService().updatePartner(id, params);
   }
@@ -55,6 +57,7 @@ export class PartnerController extends Controller {
    * @param id ID of the partner to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deletePartner(id: number): Promise<void> {
     return new PartnerService().deletePartner(id);
   }
@@ -63,6 +66,7 @@ export class PartnerController extends Controller {
    * Upload a logo for a partner
    */
   @Put('{id}/logo')
+  @Security('local')
   public async uploadPartnerLogo(@UploadedFile() logo: Express.Multer.File, id: number) {
     await FileService.uploadPartnerLogo(logo, id);
   }

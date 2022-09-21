@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
 } from 'tsoa';
 import ActivityService from '../services/ActivityService';
 import Activity, { ActivityParams } from '../entities/Activity';
@@ -34,6 +34,7 @@ export class ActivityController extends Controller {
    * @param params Parameters to create activity with
    */
   @Post()
+  @Security('local')
   public async createActivity(@Body() params: ActivityParams): Promise<Activity> {
     return new ActivityService().createActivity(params);
   }
@@ -44,6 +45,7 @@ export class ActivityController extends Controller {
    * @param params Update subset of parameter of activity
    */
   @Put('{id}')
+  @Security('local')
   public async updateActivity(
     id: number, @Body()
     params: ActivityParams,
@@ -56,6 +58,7 @@ export class ActivityController extends Controller {
    * @param id ID of the activity to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deleteActivity(id: number): Promise<void> {
     return new ActivityService().deleteActivity(id);
   }

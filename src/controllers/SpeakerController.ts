@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile, Query,
+  Controller, Get, Post, Delete, Route, Body, Tags, Put, UploadedFile, Query, Security,
 } from 'tsoa';
 import { Express } from 'express';
 import SpeakerService from '../services/SpeakerService';
@@ -37,6 +37,7 @@ export class SpeakerController extends Controller {
    * @param params Parameters to create speaker with
    */
   @Post()
+  @Security('local')
   public async createSpeaker(@Body() params: SpeakerParams): Promise<Speaker> {
     return new SpeakerService().createSpeaker(params);
   }
@@ -47,6 +48,7 @@ export class SpeakerController extends Controller {
    * @param params Update subset of parameter of speaker
    */
   @Put('{id}')
+  @Security('local')
   public async updateSpeaker(id: number, @Body() params: Partial<SpeakerParams>): Promise<Speaker> {
     return new SpeakerService().updateSpeaker(id, params);
   }
@@ -56,6 +58,7 @@ export class SpeakerController extends Controller {
    * @param id ID of the speaker to delete
    */
   @Delete('{id}')
+  @Security('local')
   public async deleteSpeaker(id: number): Promise<void> {
     return new SpeakerService().deleteSpeaker(id);
   }
@@ -64,6 +67,7 @@ export class SpeakerController extends Controller {
    * Upload an image for a speaker
    */
   @Put('{id}/image')
+  @Security('local')
   public async uploadSpeakerImage(@UploadedFile() logo: Express.Multer.File, id: number) {
     await FileService.uploadSpeakerImage(logo, id);
   }
