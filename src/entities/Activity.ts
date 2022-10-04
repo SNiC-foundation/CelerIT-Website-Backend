@@ -29,7 +29,7 @@ export default class Activity extends BaseEnt {
   @Column({ nullable: false })
     programPartId: number;
 
-  @ManyToOne(() => ProgramPart)
+  @ManyToOne(() => ProgramPart, { eager: true })
   @JoinColumn({ name: 'programPartId' })
     programPart: ProgramPart;
 
