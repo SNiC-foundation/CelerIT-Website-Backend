@@ -33,7 +33,7 @@ export default class User extends BaseEnt {
   @Column()
     name: string;
 
-  @Column({ type: 'longtext', default: '' })
+  @Column({ type: 'text', default: '' })
     dietaryWishes: string;
 
   @Column()

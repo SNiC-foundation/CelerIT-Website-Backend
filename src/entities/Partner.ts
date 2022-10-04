@@ -35,10 +35,10 @@ export default class Partner extends BaseEnt {
   @Column()
     specialization: string;
 
-  @Column({ type: 'longtext', nullable: true })
+  @Column({ type: 'text', nullable: true })
     shortDescription?: string;
 
-  @Column({ type: 'longtext', nullable: true })
+  @Column({ type: 'text', nullable: true })
     description?: string;
 
   @Column()

@@ -13,7 +13,7 @@ export default class Speaker extends BaseEnt {
   @Column()
     name: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
     description: string;
 
   @OneToMany(() => Activity, (act) => act.speaker, { nullable: true })

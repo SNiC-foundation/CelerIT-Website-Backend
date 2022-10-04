@@ -33,7 +33,7 @@ export default class Activity extends BaseEnt {
   @JoinColumn({ name: 'programPartId' })
     programPart: ProgramPart;
 
-  @Column({ type: 'longtext', nullable: true })
+  @Column({ type: 'text', nullable: true })
     description?: string;
 
   @Column({ nullable: true })
