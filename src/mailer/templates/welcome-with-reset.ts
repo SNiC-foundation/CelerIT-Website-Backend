@@ -32,7 +32,7 @@ const welcomeWithReset = new MailContent<WelcomeWithResetOptions>({
 
 <p>You have finished the first steps of activating your SNiC 2022: CelerIT ticket.</p>
 
-<p>To finish the activation process, you have to set a password by going to ${`${context.url}/passwordreset?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.</p>
+<p>To finish the activation process, you have to set a password by going to ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.</p>
 
 <p>If your password is set, you can login into the website to register for the tracks. Note that this is only possible from October 31st onward!</p>
 
@@ -43,7 +43,7 @@ Dear ${context.name},
 
 You have just finished the first steps of activating your SNiC 2022: CelerIT ticket.
 
-To finish the activation process, you have to set a password by going to ${`${context.url}/passwordreset?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.
+To finish the activation process, you have to set a password by going to ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.
 
 If your password is set, you can login into the website to register for the tracks. Note that this is only possible from October 31st onward!
 
@@ -57,7 +57,7 @@ export default class WelcomeWithReset extends MailTemplate<WelcomeWithResetOptio
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.SERVER_HOST;
+      opt.url = process.env.URL;
     }
     super(opt, welcomeWithReset);
   }

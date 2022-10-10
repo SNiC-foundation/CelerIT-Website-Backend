@@ -28,7 +28,7 @@ interface WelcomeWithResetOptions {
 
 const passwordReset = new MailContent<WelcomeWithResetOptions>({
   getHTML: (context) => {
-    const link = `${context.url}/passwordreset?token=${context.token}&email=${context.email}`;
+    const link = `${context.url}/reset-password?token=${context.token}&email=${context.email}`;
     return `
 <p>Dear ${context.name},</p>
 
@@ -48,7 +48,7 @@ Dear ${context.name},
 
 A password reset for this email address has been requested. To complete the process, use the following link any time within the next 60 minutes: 
 
-${`${context.url}/passwordreset?token=${context.token}&email=${context.email}`}
+${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}
 
 If you have not requested a password reset, you can safely ignore this email and use your current login information.
 
@@ -62,7 +62,7 @@ export default class PasswordReset extends MailTemplate<WelcomeWithResetOptions>
       ...options,
     };
     if (!options.url) {
-      opt.url = process.env.SERVER_HOST;
+      opt.url = process.env.URL;
     }
     super(opt, passwordReset);
   }
