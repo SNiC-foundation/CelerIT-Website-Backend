@@ -64,4 +64,13 @@ export class ParticipantController extends Controller {
   public async deleteParticipant(id: number): Promise<void> {
     return new ParticipantService().deleteParticipant(id);
   }
+
+  /**
+   * Get encrypted participant id
+   * @param id ID of the participant to encrypt
+   */
+  @Get('{id}/qrcode')
+  public async getEncryptedParticipantId(id: number): Promise<String> {
+    return new ParticipantService().getEncryptedParticipantId(id);
+  }
 }

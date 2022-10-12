@@ -1,7 +1,10 @@
 import { Repository } from 'typeorm';
-import Partner, { PartnerParams } from '../entities/Partner';
+import * as forge from 'node-forge';
+import Partner, { PartnerParams, QRParams } from '../entities/Partner';
+import Participant from '../entities/Participant';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
+import keys from '../qrcodes/keys.json';
 
 export default class PartnerService {
   repo: Repository<Partner>;
@@ -65,5 +68,44 @@ export default class PartnerService {
     }
 
     await this.repo.delete(partner.id);
+  }
+
+  /**
+   * QR Code Scanned
+   */
+  async requestScan(id: number, params: QRParams): Promise<void> {
+    const { key, iv } = keys;
+
+    const decipher = forge.cipher.createDecipher('AES-CBC', key);
+    decipher.start({ iv });
+    decipher.update(forge.util.createBuffer(forge.util.hexToBytes(params.encryptedId)));
+    decipher.finish(); // check 'result' for true/false
+
+    const participantId = parseInt(decipher.output.toString(), 10);
+    const participant = await getDataSource().getRepository(Participant).findOne(
+      { where: { id: participantId } },
+    );
+    if (participant == null) {
+      throw new ApiError(HTTPStatus.NotFound, 'Participant not found');
+    } else {
+      await this.logScan(id, participant);
+    }
+
+    console.log(`id: ${decipher.output.toString()}`);
+  }
+
+  /**
+   * Log participant scan to database
+   */
+  async logScan(partnerId: number, participant: Participant): Promise<void> {
+    // Check if participant_id agrees
+    // Store in scan table
+
+    if (participant.agreeToSharingWithCompanies) {
+      const partner = await this.getPartner(partnerId);
+
+      partner.participants.push(participant);
+      await partner.save();
+    }
   }
 }

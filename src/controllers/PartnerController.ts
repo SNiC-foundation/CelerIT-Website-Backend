@@ -3,8 +3,8 @@ import {
 } from 'tsoa';
 import { Express } from 'express';
 import PartnerService from '../services/PartnerService';
-import Partner, { PartnerParams } from '../entities/Partner';
 import FileService from '../services/FileService';
+import Partner, { PartnerParams, QRParams } from '../entities/Partner';
 
 /**
  * TODO: Add paramater validation
@@ -69,5 +69,14 @@ export class PartnerController extends Controller {
   @Security('local')
   public async uploadPartnerLogo(@UploadedFile() logo: Express.Multer.File, id: number) {
     await FileService.uploadPartnerLogo(logo, id);
+  }
+
+  /**
+   * Request scan of an encrypted participant ID
+   * @param encryptedID Encrypted participant ID of the scanned participant
+   */
+  @Post('{id}/scanqr')
+  public async requestScan(id: number, @Body() params: QRParams): Promise<void> {
+    return new PartnerService().requestScan(id, params);
   }
 }

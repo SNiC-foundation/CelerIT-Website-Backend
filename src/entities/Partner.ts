@@ -1,7 +1,8 @@
 import {
-  Column, Entity,
+  Column, Entity, JoinTable, ManyToMany,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
+import Participant from './Participant';
 
 export enum SponsorPackage {
   // eslint-disable-next-line no-unused-vars
@@ -22,6 +23,10 @@ export interface PartnerParams {
   description?: string;
   url: string;
   package: SponsorPackage;
+}
+
+export interface QRParams {
+  encryptedId: string;
 }
 
 @Entity()
@@ -49,4 +54,8 @@ export default class Partner extends BaseEnt {
 
   @Column({ nullable: true })
     logoFilename?: string;
+
+  @ManyToMany(() => Participant)
+  @JoinTable()
+    participants: Participant[];
 }
