@@ -5,6 +5,7 @@ import BaseEnt from './BaseEnt';
 import Role from './Role';
 // eslint-disable-next-line import/no-cycle
 import Participant, { UpdateParticipantParams } from './Participant';
+import Ticket from './Ticket';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -45,4 +46,7 @@ export default class User extends BaseEnt {
   @ManyToMany(() => Role)
   @JoinTable()
     roles: Role[];
+
+  @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true, eager: true })
+    ticket?: Ticket;
 }
