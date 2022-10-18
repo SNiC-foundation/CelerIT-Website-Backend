@@ -1,9 +1,11 @@
 import {
-  FindOptionsWhere, Not, IsNull, Repository,
+  FindOptionsWhere, IsNull, Not, Repository,
 } from 'typeorm';
 import crypto from 'crypto';
+import bs58 from 'bs58';
 import { getDataSource } from '../database/dataSource';
 import Ticket, { TicketParams } from '../entities/Ticket';
+import { ApiError, HTTPStatus } from '../helpers/error';
 
 /**
  * @typedef TicketFilterParameters
@@ -47,7 +49,9 @@ export default class TicketService {
    * @param code
    */
   getSingleTicket(code: string): Promise<Ticket | null> {
-    return this.repo.findOne({ where: { code } });
+    const ticket = this.repo.findOne({ where: { code }, relations: ['user'] });
+    if (ticket == null) throw new ApiError(HTTPStatus.NotFound, 'Ticket not found.');
+    return ticket;
   }
 
   /**
@@ -63,7 +67,8 @@ export default class TicketService {
   }
 
   async createTicket(params: TicketParams): Promise<Ticket> {
-    const code = crypto.randomBytes(16).toString('hex');
+    const codeBytes = crypto.randomBytes(8);
+    const code = bs58.encode(codeBytes);
     const ticket = Object.assign(new Ticket(), {
       association: params.association,
       code,
@@ -79,5 +84,12 @@ export default class TicketService {
     }
     await Promise.all(promises);
     return tickets;
+  }
+
+  async deleteTicket(id: number): Promise<void> {
+    const ticket = await this.repo.findOne({ where: { id }, relations: ['user'] });
+    if (ticket == null) throw new ApiError(HTTPStatus.NotFound, 'Ticket not found');
+    if (ticket.user != null) throw new ApiError(HTTPStatus.BadRequest, 'Ticket already claimed by participant');
+    await this.repo.delete(ticket.id);
   }
 }

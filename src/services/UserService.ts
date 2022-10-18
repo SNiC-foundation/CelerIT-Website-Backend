@@ -26,7 +26,7 @@ export default class UserService {
    * TODO: Add relations in findOne()
    */
   async getUser(id: number): Promise<User> {
-    const user = await this.repo.findOne({ where: { id } });
+    const user = await this.repo.findOne({ where: { id }, relations: ['ticket'] });
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
     }

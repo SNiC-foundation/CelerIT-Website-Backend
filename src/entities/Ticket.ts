@@ -11,15 +11,15 @@ export interface TicketParams {
 @Entity()
 export default class Ticket extends BaseEnt {
     @Column({ type: 'integer', nullable: true })
-      userId: number;
+      userId?: number;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'userId' })
-      user: User;
+      user?: User;
 
     @Column({ default: '' })
       association: string;
 
-    @Column()
+    @Column({ unique: true })
       code: string;
 }

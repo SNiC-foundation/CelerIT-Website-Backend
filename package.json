@@ -29,6 +29,7 @@
   "dependencies": {
     "@tsoa/runtime": "^4.1.0",
     "body-parser": "^1.20.0",
+    "bs58": "^5.0.0",
     "connect-typeorm": "^2.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
