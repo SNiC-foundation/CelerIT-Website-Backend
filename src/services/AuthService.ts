@@ -136,7 +136,7 @@ export default class AuthService {
       throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);
     }
 
-    const user = await this.userRepo.findOneBy({ id: token.user_id });
+    const user = await this.userRepo.findOne({ where: { id: token.user_id }, relations: ['participant'] });
     const identity = await this.LocalAuthenticatorRepo.findOneBy({ userId: token.user_id });
     // Check if the user is defined
     if (user == null || identity == null) {
@@ -144,24 +144,28 @@ export default class AuthService {
     }
 
     try {
+      // Verify the token
+      jwt.verify(tokenString, `${identity.salt || ''}.${user.createdAt}`);
+      const salt = generateSalt();
+
       switch (token.type) {
         case 'PASSWORD_RESET':
         case 'PASSWORD_SET':
         {
-          // Verify the token
-          jwt.verify(tokenString, `${identity.salt || ''}.${user.createdAt}`);
-          const salt = generateSalt();
           await this.LocalAuthenticatorRepo.update(user.id, {
             userId: user.id,
-            // email: user.email,
             verifiedEmail: true,
             hash: hashPassword(newPassword, salt),
             salt,
           });
-          return;
+          break;
         }
         default:
           throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);
+      }
+
+      if (!user.emailVerified && user.participantInfo !== undefined) {
+        // Todo: send participants information email when they verified their email address.
       }
     } catch (e) {
       throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);

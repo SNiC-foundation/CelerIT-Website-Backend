@@ -17,7 +17,7 @@
  */
 import { Transporter } from 'nodemailer';
 import createSMTPTransporter from './transporter';
-import MailTemplate from './templates/mail-template';
+import MailTemplate from './templates/MailTemplate';
 import User from '../entities/User';
 
 export default class Mailer {

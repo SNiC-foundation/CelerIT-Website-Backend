@@ -34,6 +34,9 @@ export default class User extends BaseEnt {
   @Column()
     name: string;
 
+  @Column({ default: false })
+    emailVerified: boolean;
+
   @Column({ type: 'text', default: '' })
     dietaryWishes: string;
 

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import Mail from 'nodemailer/lib/mailer';
-import MailContent from './mail-content';
+import MailContent from './MailContent';
 
 export default class MailTemplate<T> {
   protected baseMailOptions: Mail.Options = {

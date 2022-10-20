@@ -15,9 +15,9 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import MailTemplate from './mail-template';
+import MailTemplate from './MailTemplate';
 import signature from './signature';
-import MailContent from './mail-content';
+import MailContent from './MailContent';
 
 interface WelcomeWithResetOptions {
   name: string;

@@ -39,6 +39,7 @@ export default class UserService {
   createUser(params: UserParams): Promise<User> {
     const user = {
       ...params,
+      emailVerified: false,
     } as any as User;
     return this.repo.save(user);
   }

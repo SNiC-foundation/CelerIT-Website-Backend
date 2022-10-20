@@ -16,5 +16,5 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export { default as PasswordReset } from './password-reset';
-export { default as WelcomeWithReset } from './welcome-with-reset';
+export { default as PasswordReset } from './PasswordReset';
+export { default as WelcomeWithReset } from './RegisterUserWithPasswordReset';
