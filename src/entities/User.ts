@@ -5,6 +5,7 @@ import BaseEnt from './BaseEnt';
 import Role from './Role';
 // eslint-disable-next-line import/no-cycle
 import Participant, { UpdateParticipantParams } from './Participant';
+// eslint-disable-next-line import/no-cycle
 import Ticket from './Ticket';
 
 export interface CreateParticipantUserParams {
@@ -14,7 +15,6 @@ export interface CreateParticipantUserParams {
   agreeToPrivacyPolicy: boolean;
   participantInfo: {
     studyProgram: string;
-    agreeToSharingWithCompanies: boolean;
   }
 }
 

@@ -98,14 +98,10 @@ export default class PartnerService {
    * Log participant scan to database
    */
   async logScan(partnerId: number, participant: Participant): Promise<void> {
-    // Check if participant_id agrees
     // Store in scan table
+    const partner = await this.getPartner(partnerId);
 
-    if (participant.agreeToSharingWithCompanies) {
-      const partner = await this.getPartner(partnerId);
-
-      partner.participants.push(participant);
-      await partner.save();
-    }
+    partner.participants.push(participant);
+    await partner.save();
   }
 }

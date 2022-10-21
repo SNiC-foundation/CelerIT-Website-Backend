@@ -8,7 +8,6 @@ import User from './User';
 export interface UpdateParticipantParams {
   studyAssociation: string;
   studyProgram: string;
-  agreeToSharingWithCompanies: boolean;
 }
 
 export interface CreateParticipantParams extends UpdateParticipantParams {
@@ -29,7 +28,4 @@ export default class Participant extends BaseEnt {
 
   @Column()
     studyProgram: string;
-
-  @Column()
-    agreeToSharingWithCompanies: boolean;
 }

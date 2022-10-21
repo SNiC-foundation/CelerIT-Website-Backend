@@ -20,7 +20,6 @@ export default class ActivityFactory { // extends Factory<Activity> {
   ): Activity {
     const [randDesc,
       randImage,
-      randSpeaker,
     ] = [0, 0, 0, 0].map(() => (randomFill ? Math.random() < 0.5 : false));
 
     const params: ActivityParams = {
@@ -29,7 +28,6 @@ export default class ActivityFactory { // extends Factory<Activity> {
       programPartId: programPart.id,
       description: randDesc ? faker.animal.bird() : undefined,
       image: randImage ? faker.animal.lion() : undefined,
-      speakerId: randSpeaker ? speaker.id : undefined,
     };
 
     const activity = new Activity();
@@ -37,9 +35,7 @@ export default class ActivityFactory { // extends Factory<Activity> {
     activity.location = params.location;
     activity.programPartId = params.programPartId;
     activity.description = params.description;
-    activity.image = params.image;
-    activity.image = params.image;
-    activity.speakerId = params.speakerId;
+    activity.speakers = [speaker];
     return activity;
   }
 
