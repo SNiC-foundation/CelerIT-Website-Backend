@@ -53,6 +53,17 @@ export class UserController extends Controller {
   }
 
   /**
+   * updateUserRoles() - update user roles
+   * @param id ID of user to update
+   * @param roleIds IDs of all roles this user should have
+   */
+  @Put('{id}/roles')
+  @Security('local')
+  public async updateUserRoles(id: number, @Body() roleIds: number[]): Promise<User> {
+    return new UserService().updateUserRoles(id, roleIds);
+  }
+
+  /**
    * Delete user
    * @param id ID of the user to delete
    */

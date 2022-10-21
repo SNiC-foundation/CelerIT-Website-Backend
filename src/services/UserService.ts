@@ -1,11 +1,10 @@
-import { Repository } from 'typeorm';
-import faker from '@faker-js/faker';
-import crypto from 'crypto';
+import { In, Repository } from 'typeorm';
 import User, { UserParams } from '../entities/User';
-import { HTTPStatus, ApiError } from '../helpers/error';
+import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import ParticipantService from './ParticipantService';
 import Ticket from '../entities/Ticket';
+import Role from '../entities/Role';
 
 export default class UserService {
   repo: Repository<User>;
@@ -18,7 +17,7 @@ export default class UserService {
    * Get all Users
    */
   public async getAllUsers(): Promise<User[]> {
-    return this.repo.find();
+    return this.repo.find({ relations: ['roles'] });
   }
 
   /**
@@ -26,7 +25,7 @@ export default class UserService {
    * TODO: Add relations in findOne()
    */
   async getUser(id: number): Promise<User> {
-    const user = await this.repo.findOne({ where: { id }, relations: ['ticket'] });
+    const user = await this.repo.findOne({ where: { id }, relations: ['ticket', 'roles'] });
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
     }
@@ -39,7 +38,7 @@ export default class UserService {
   createUser(params: UserParams): Promise<User> {
     const user = {
       ...params,
-      emailVerified: false,
+      emailVerified: true,
     } as any as User;
     return this.repo.save(user);
   }
@@ -51,6 +50,7 @@ export default class UserService {
     return Promise.resolve(getDataSource().manager.transaction((manager) => {
       const user = Object.assign(new User(), {
         ...params,
+        emailVerified: false,
       }) as User;
       return manager.save(user).then((u) => {
         // eslint-disable-next-line no-param-reassign
@@ -82,6 +82,24 @@ export default class UserService {
     } else if (user.participantInfo && !participantInfo) {
       await new ParticipantService().deleteParticipant(user.participantInfo.id);
     }
+
+    return this.getUser(id);
+  }
+
+  /**
+   * Update the roles of a user
+   * @param id
+   * @param roleIds
+   */
+  async updateUserRoles(id: number, roleIds: number[]): Promise<User> {
+    const user = await this.getUser(id);
+
+    if (user == null) {
+      throw new ApiError(HTTPStatus.NotFound);
+    }
+
+    user.roles = await getDataSource().getRepository(Role).find({ where: { id: In(roleIds) } });
+    await this.repo.save(user);
 
     return this.getUser(id);
   }
