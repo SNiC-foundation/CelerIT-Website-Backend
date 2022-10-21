@@ -1,9 +1,9 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import Activity, { ActivityParams } from '../entities/Activity';
 import { getDataSource } from '../database/dataSource';
 import { ApiError, HTTPStatus } from '../helpers/error';
-import SubscribeActivity from '../entities/SubscribeActivity';
 import SubscribeActivityService from './SubscribeActivityService';
+import Speaker from '../entities/Speaker';
 
 export default class ActivityService {
   repo: Repository<Activity>;
@@ -16,7 +16,11 @@ export default class ActivityService {
    * Get all Activities
    */
   public async getAllActivities(): Promise<Activity[]> {
-    return this.repo.find();
+    return this.repo.find({
+      relations: {
+        speakers: true,
+      },
+    });
   }
 
   /**
@@ -47,12 +51,17 @@ export default class ActivityService {
    * Update Activity
    */
   async updateActivity(id: number, params: ActivityParams): Promise<Activity> {
-    const { subscribe, ...rest } = params;
-    await this.repo.update(id, rest);
     const activity = await this.getActivity(id);
-
     if (activity == null) {
       throw new ApiError(HTTPStatus.NotFound);
+    }
+
+    const { subscribe, speakerIds, ...rest } = params;
+    await this.repo.update(id, rest);
+    if (speakerIds) {
+      const speakerRepo = getDataSource().getRepository(Speaker);
+      activity.speakers = await speakerRepo.find({ where: { id: In(speakerIds) } });
+      await this.repo.save(activity);
     }
 
     if (activity.subscribe && subscribe) {

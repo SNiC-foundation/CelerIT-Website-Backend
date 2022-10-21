@@ -61,7 +61,6 @@ function createApp(): void {
     // Use body parser to read sent json payloads
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
-    app.use(validationErrorHandler);
 
     setupSessionSupport(app);
     app.post('/api/login', localLogin);
@@ -73,6 +72,7 @@ function createApp(): void {
     }
 
     RegisterRoutes(app);
+    app.use(validationErrorHandler);
 
     const port = process.env.PORT || 3001;
     // eslint-disable-next-line no-console
