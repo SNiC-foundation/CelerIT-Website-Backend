@@ -10,6 +10,7 @@ import SpeakerService from './SpeakerService';
 export const uploadDirLoc = 'data';
 export const uploadPartnerLogoDir = 'data/partners';
 export const uploadSpeakerImageDir = 'data/speakers';
+export const barcodeDirLoc = 'data/barcodes';
 
 export default class FileService {
   private static removeFileAtLoc(location: string) {

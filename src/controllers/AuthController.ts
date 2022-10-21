@@ -8,6 +8,8 @@ import User, { CreateParticipantUserParams } from '../entities/User';
 import TicketService from '../services/TicketService';
 import UserService from '../services/UserService';
 import AuthService, { ForgotPasswordRequest, ResetPasswordRequest } from '../services/AuthService';
+import BarcodeGenerator from '../qrcodes/BarcodeGenerator';
+import { barcodeDirLoc } from '../services/FileService';
 
 export interface RegisterUserParams {
   user: CreateParticipantUserParams,
@@ -34,6 +36,7 @@ export class AuthController extends Controller {
       },
     }, ticket);
     await new AuthService().createIdentityLocal(user, false);
+    new BarcodeGenerator(ticket.code, barcodeDirLoc).generateCode();
     return user;
   }
 

@@ -11,7 +11,9 @@ import { getDataSource, initializeDataSource } from './database/dataSource';
 import { config, localLogin } from './authentication/LocalStrategy';
 import * as swaggerJson from './public/swagger.json';
 import { validationErrorHandler } from './helpers/error';
-import { uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir } from './services/FileService';
+import {
+  barcodeDirLoc, uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
+} from './services/FileService';
 import { Session } from './entities/Authentication/Session';
 
 /**
@@ -52,7 +54,7 @@ function createApp(): void {
   initializeDataSource().then(() => {
     const app = express();
 
-    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir].forEach((loc) => {
+    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir, barcodeDirLoc].forEach((loc) => {
       if (!fs.existsSync(path.join(__dirname, '../', loc))) {
         fs.mkdirSync(path.join(__dirname, '../', loc));
       }
@@ -69,6 +71,7 @@ function createApp(): void {
       app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
       app.use('/api/static/partners', express.static(path.join(__dirname, '/../', uploadPartnerLogoDir)));
       app.use('/api/static/speakers', express.static(path.join(__dirname, '/../', uploadSpeakerImageDir)));
+      app.use('/api/static/barcodes', express.static(path.join(__dirname, '/../', barcodeDirLoc)));
     }
 
     RegisterRoutes(app);
