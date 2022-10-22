@@ -56,7 +56,7 @@ export default class User extends BaseEnt {
   @JoinTable()
     roles: Role[];
 
-  @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true })
+  @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true, onDelete: 'SET NULL' })
     ticket?: Ticket;
 
   @Column({ nullable: true })

@@ -18,3 +18,4 @@
 
 export { default as PasswordReset } from './PasswordReset';
 export { default as WelcomeWithReset } from './RegisterUserWithPasswordReset';
+export { default as TicketActivated } from './TicketActivated';

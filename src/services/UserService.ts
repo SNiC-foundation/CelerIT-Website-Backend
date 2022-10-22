@@ -5,6 +5,8 @@ import { getDataSource } from '../database/dataSource';
 import ParticipantService from './ParticipantService';
 import Ticket from '../entities/Ticket';
 import Role from '../entities/Role';
+import { TicketActivated } from '../mailer';
+import AuthService from './AuthService';
 
 export default class UserService {
   repo: Repository<User>;
@@ -121,7 +123,7 @@ export default class UserService {
    * TODO: Add relations in findOne()
    */
   async deleteUser(id: number): Promise<void> {
-    const user = await this.repo.findOne({ where: { id } });
+    const user = await this.repo.findOne({ where: { id }, relations: ['participantInfo', 'ticket'] });
 
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
@@ -130,6 +132,17 @@ export default class UserService {
     if (user.participantInfo != null) {
       await new ParticipantService().deleteParticipant(user.participantInfo.id);
     }
+
+    if (user.ticket != null) {
+      const ticketRepo = getDataSource().getRepository(Ticket);
+      const ticket = await ticketRepo.findOne({ where: { userId: user.id } });
+      if (ticket == null) throw new Error();
+      ticket.userId = null;
+      ticket.user = null;
+      await ticket.save();
+    }
+
+    await new AuthService().deleteIdentities(user.id);
 
     await this.repo.delete(user.id);
   }

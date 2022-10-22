@@ -9,6 +9,8 @@ import { generateSalt, hashPassword } from '../authentication/LocalStrategy';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import { Mailer, PasswordReset, WelcomeWithReset } from '../mailer';
+import { TicketActivated } from '../mailer/templates';
+import UserService from './UserService';
 
 const INVALID_TOKEN = 'Invalid token.';
 export interface AuthStatus {
@@ -136,7 +138,7 @@ export default class AuthService {
       throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);
     }
 
-    const user = await this.userRepo.findOne({ where: { id: token.user_id }, relations: ['participant'] });
+    const user = await this.userRepo.findOne({ where: { id: token.user_id }, relations: ['participantInfo', 'ticket'] });
     const identity = await this.LocalAuthenticatorRepo.findOneBy({ userId: token.user_id });
     // Check if the user is defined
     if (user == null || identity == null) {
@@ -163,16 +165,18 @@ export default class AuthService {
         default:
           throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);
       }
-
-      if (!user.emailVerified && user.participantInfo !== undefined) {
-        // Todo: send participants information email when they verified their email address.
-      }
     } catch (e) {
       throw new ApiError(HTTPStatus.BadRequest, INVALID_TOKEN);
+    }
+
+    if (!user.emailVerified && user.participantInfo !== undefined) {
+      await Mailer.getInstance().send(user, new TicketActivated({ name: user.name, ticketCode: user.ticket?.code || '' }));
+      user.emailVerified = true;
+      await user.save();
     }
   }
 
   async deleteIdentities(id: number) {
-    await this.LocalAuthenticatorRepo.softDelete(id);
+    await this.LocalAuthenticatorRepo.delete(id);
   }
 }
