@@ -15,7 +15,8 @@ export async function expressAuthentication(
 ): Promise<any> {
   switch (securityName) {
     case 'local': {
-      if (!request.isAuthenticated() || request.user === undefined) {
+      const isLoggedIn = (!!request.isAuthenticated());
+      if (!isLoggedIn) {
         throw new ApiError(HTTPStatus.Unauthorized, 'You are not logged in.');
       }
 
