@@ -29,7 +29,7 @@ export interface PersonalUserParams {
 export interface UserParams extends PersonalUserParams {
   email: string;
   agreeToPrivacyPolicy: boolean;
-  partnerId?: number;
+  partnerId?: number | null;
 }
 
 @Entity()

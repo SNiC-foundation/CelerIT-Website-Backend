@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import MailTemplate from './MailTemplate';
-import signature from './signature';
 import MailContent from './MailContent';
 
 interface WelcomeWithResetOptions {
@@ -31,16 +30,9 @@ const passwordReset = new MailContent<WelcomeWithResetOptions>({
     const link = `${context.url}/reset-password?token=${context.token}&email=${context.email}`;
     return `
 <p>Dear ${context.name},</p>
-
 <p>A password reset for this email address has been requested. To complete the process, use the following link any time within the next 60 minutes: </p>
-
 <p><a href="${link}">Reset Link</a></p>
-
-<p> Or paste the following in your browser: ${link}</p>
-
-<p>If you have not requested a password reset, you can safely ignore this email and use your current login information.</p>
-
-${signature}`;
+<p>If you have not requested a password reset, you can safely ignore this email and use your current login information.</p>`;
   },
   getSubject: () => 'Password reset',
   getText: (context) => `
@@ -50,10 +42,7 @@ A password reset for this email address has been requested. To complete the proc
 
 ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}
 
-If you have not requested a password reset, you can safely ignore this email and use your current login information.
-
-Kind regards,
-SNiC 2022: CelerIT`,
+If you have not requested a password reset, you can safely ignore this email and use your current login information.`,
 });
 
 export default class PasswordReset extends MailTemplate<WelcomeWithResetOptions> {

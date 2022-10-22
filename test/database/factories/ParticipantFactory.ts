@@ -14,13 +14,11 @@ export default class ParticipantFactory { // extends Factory<Participant> {
 
   private constructObject(user: User): Participant {
     const params: UpdateParticipantParams = {
-      studyAssociation: `${faker.name.middleName()}  ${faker.animal.snake()}`,
       studyProgram: faker.vehicle.model(),
     };
 
     const participant = new Participant();
     participant.userId = user.id;
-    participant.studyAssociation = params.studyAssociation;
     participant.studyProgram = params.studyProgram;
     return participant;
   }
