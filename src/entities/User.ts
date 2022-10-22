@@ -1,5 +1,5 @@
 import {
-  Column, Entity, JoinTable, ManyToMany, OneToOne,
+  Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 import Role from './Role';
@@ -7,6 +7,8 @@ import Role from './Role';
 import Participant, { UpdateParticipantParams } from './Participant';
 // eslint-disable-next-line import/no-cycle
 import Ticket from './Ticket';
+// eslint-disable-next-line import/no-cycle
+import Partner from './Partner';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -18,12 +20,16 @@ export interface CreateParticipantUserParams {
   }
 }
 
-export interface UserParams {
-  email: string;
+export interface PersonalUserParams {
   name: string;
   dietaryWishes: string;
-  agreeToPrivacyPolicy: boolean;
   participantInfo?: UpdateParticipantParams;
+}
+
+export interface UserParams extends PersonalUserParams {
+  email: string;
+  agreeToPrivacyPolicy: boolean;
+  partnerId?: number;
 }
 
 @Entity()
@@ -52,4 +58,11 @@ export default class User extends BaseEnt {
 
   @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true })
     ticket?: Ticket;
+
+  @Column({ nullable: true })
+    partnerId?: number | null;
+
+  @ManyToOne(() => Partner, { nullable: true })
+  @JoinColumn({ name: 'partnerId' })
+    partner?: Partner | null;
 }

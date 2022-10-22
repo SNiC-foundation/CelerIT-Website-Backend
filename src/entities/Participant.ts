@@ -6,7 +6,6 @@ import BaseEnt from './BaseEnt';
 import User from './User';
 
 export interface UpdateParticipantParams {
-  studyAssociation: string;
   studyProgram: string;
 }
 
@@ -22,9 +21,6 @@ export default class Participant extends BaseEnt {
   @OneToOne(() => User, (user) => user.participantInfo, { eager: false, cascade: ['insert', 'update'] })
   @JoinColumn({ name: 'userId' })
     user: User;
-
-  @Column()
-    studyAssociation: string;
 
   @Column()
     studyProgram: string;

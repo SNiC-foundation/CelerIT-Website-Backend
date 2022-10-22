@@ -1,5 +1,5 @@
 import { In, Repository } from 'typeorm';
-import User, { UserParams } from '../entities/User';
+import User, { PersonalUserParams, UserParams } from '../entities/User';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import ParticipantService from './ParticipantService';
@@ -17,7 +17,7 @@ export default class UserService {
    * Get all Users
    */
   public async getAllUsers(): Promise<User[]> {
-    return this.repo.find({ relations: ['roles'] });
+    return this.repo.find({ relations: ['ticket', 'roles'] });
   }
 
   /**
@@ -64,6 +64,18 @@ export default class UserService {
    * Update User
    */
   async updateUser(id: number, params: Partial<UserParams>): Promise<User> {
+    // eslint-disable-next-line no-param-reassign
+    if (!params.partnerId) params.partnerId = null;
+    return this.updateUserProfile(id, params);
+  }
+
+  /**
+   * Update User (personal)
+   */
+  async updateUserProfile(
+    id: number,
+    params: Partial<UserParams> | Partial<PersonalUserParams>,
+  ): Promise<User> {
     const { participantInfo, ...rest } = params;
     await this.repo.update(id, rest);
     const user = await this.getUser(id);

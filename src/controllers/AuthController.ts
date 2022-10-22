@@ -30,9 +30,9 @@ export class AuthController extends Controller {
     if (ticket === null) throw new ApiError(HTTPStatus.BadRequest, 'Invalid Token');
     const user = await new UserService().registerUser({
       ...params.user,
+      partnerId: null,
       participantInfo: {
         ...params.user.participantInfo,
-        studyAssociation: ticket.association,
       },
     }, ticket);
     await new AuthService().createIdentityLocal(user, false);
