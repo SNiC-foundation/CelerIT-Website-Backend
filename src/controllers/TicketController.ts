@@ -1,8 +1,10 @@
 import {
-  Controller, Get, Post, Route, Body, Tags, Query, Security, Delete,
+  Controller, Get, Post, Route, Body, Tags, Query, Security, Delete, Request,
 } from 'tsoa';
+import express from 'express';
 import Ticket from '../entities/Ticket';
 import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../services/TicketService';
+import User from '../entities/User';
 
 /**
  * TODO: Add paramater validation
@@ -30,6 +32,15 @@ export class TicketController extends Controller {
     return new TicketService().getSingleTicket(code);
   }
 
+  @Get('{code}/scan')
+  @Security('local')
+  public async scanSingleTicket(
+    code: string,
+    @Request() request: express.Request,
+  ): Promise<Ticket | null> {
+    return new TicketService().scanTicket(code, request.user as User);
+  }
+
   /**
    * createTicket() - create ticket
    * @param params Parameters to create tickets with
@@ -39,16 +50,6 @@ export class TicketController extends Controller {
   public async createTicket(@Body() params: CreateTicketPrams): Promise<Ticket[]> {
     return new TicketService().createTickets(params);
   }
-
-  // /**
-  //  * updateUser() - update user
-  //  * @param id ID of user to update
-  //  * @param params Update subset of parameter of user
-  //  */
-  // @Put('{id}')
-  // public async updateTicket(id: number, @Body() params: Partial<UserParams>): Promise<User> {
-  //   return new UserService().updateUser(id, params);
-  // }
 
   /**
    * Delete user
