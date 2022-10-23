@@ -9,6 +9,8 @@ import Participant, { UpdateParticipantParams } from './Participant';
 import Ticket from './Ticket';
 // eslint-disable-next-line import/no-cycle
 import Partner from './Partner';
+// eslint-disable-next-line import/no-cycle
+import SubscribeActivity from './SubscribeActivity';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -65,4 +67,8 @@ export default class User extends BaseEnt {
   @ManyToOne(() => Partner, { nullable: true })
   @JoinColumn({ name: 'partnerId' })
     partner?: Partner | null;
+
+  @ManyToMany(() => SubscribeActivity, (act) => act.subscribers)
+  @JoinTable()
+    subscriptions: SubscribeActivity[];
 }

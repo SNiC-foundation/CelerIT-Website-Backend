@@ -54,6 +54,11 @@ export function validationErrorHandler(
   res: Response,
   next: NextFunction,
 ): Response | void {
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+    });
+  }
   if (err instanceof ValidateError) {
     console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
     return res.status(422).json({
