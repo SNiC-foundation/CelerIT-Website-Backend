@@ -4,6 +4,7 @@ import {
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
 import Activity from './Activity';
+// eslint-disable-next-line import/no-cycle
 import User from './User';
 
 export interface UpdateSubscribeActivityParams {

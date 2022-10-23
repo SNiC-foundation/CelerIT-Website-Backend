@@ -1,8 +1,12 @@
 import {
-  Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
+  Body, Controller, Delete, Get, Post, Put, Request, Route, Security, Tags,
 } from 'tsoa';
-import ActivityService from '../services/ActivityService';
+import express from 'express';
+import ActivityService, { ActivityResponse } from '../services/ActivityService';
 import Activity, { ActivityParams } from '../entities/Activity';
+import { ApiError, HTTPStatus } from '../helpers/error';
+import UserService from '../services/UserService';
+import User from '../entities/User';
 
 /**
  * TODO: Add paramater validation
@@ -16,7 +20,7 @@ export class ActivityController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
-  public async getAllActivities(): Promise<Activity[]> {
+  public async getAllActivities(): Promise<ActivityResponse[]> {
     return new ActivityService().getAllActivities();
   }
 
@@ -61,5 +65,23 @@ export class ActivityController extends Controller {
   @Security('local')
   public async deleteActivity(id: number): Promise<void> {
     return new ActivityService().deleteActivity(id);
+  }
+
+  /**
+   * Let current user subscribe for an activity, if this
+   * activity is a subscribe activity and the user is a participant
+   * @param id
+   * @param request
+   */
+  @Post('{id}/subscribe')
+  @Security('local')
+  public async subscribeToActivity(id: number, @Request() request: express.Request): Promise<void> {
+    if (request.user == null) throw new ApiError(HTTPStatus.Forbidden, 'No user logged in');
+
+    const user = await new UserService()
+      .getUser((request.user as User).id, { subscriptions: true });
+    if (user.participantInfo == null) throw new ApiError(HTTPStatus.Forbidden, 'User does not have participant information');
+
+    await new ActivityService().subscribeToActivity(id, request.user as User);
   }
 }
