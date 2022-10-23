@@ -17,18 +17,12 @@
  */
 import MailTemplate from './MailTemplate';
 import MailContent from './MailContent';
+import { RegisterUserWithPasswordReset } from './RegisterUserWithPasswordReset';
 
-export interface RegisterUserWithPasswordReset {
-  name: string;
-  email: string,
-  token: string,
-  url?: string;
-}
-
-const registerParticipantWithPasswordReset = new MailContent<RegisterUserWithPasswordReset>({
+const accountAddedForYouWithPasswordReset = new MailContent<RegisterUserWithPasswordReset>({
   getHTML: (context) => `
 <p>Dear ${context.name},</p>
-<p>You have finished the first steps of creating your account for SNiC 2022: CelerIT.</p>
+<p>An account has just been created for you on the website of SNiC 2022: CelerIT.</p>
 <p>To finish the creation process, you have to set a password by going to
     <a href="${context.url}/reset-password?token=${context.token}&email=${context.email}">to this link</a>
 . If the link has expired, you can reset your password on the website.</p>
@@ -37,14 +31,14 @@ const registerParticipantWithPasswordReset = new MailContent<RegisterUserWithPas
   getText: (context) => `
 Dear ${context.name},
 
-You have just finished the first steps of creating your account SNiC 2022: CelerIT.
+An account has just been created for you on the website of SNiC 2022: CelerIT.
 
 To finish the activation process, you have to set a password by going to ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.
 
 If your password is set, you can log in into the website.`,
 });
 
-export default class WelcomeWithReset extends MailTemplate<RegisterUserWithPasswordReset> {
+export default class AccountForYou extends MailTemplate<RegisterUserWithPasswordReset> {
   public constructor(options: RegisterUserWithPasswordReset) {
     const opt: RegisterUserWithPasswordReset = {
       ...options,
@@ -52,6 +46,6 @@ export default class WelcomeWithReset extends MailTemplate<RegisterUserWithPassw
     if (!options.url) {
       opt.url = process.env.URL;
     }
-    super(opt, registerParticipantWithPasswordReset);
+    super(opt, accountAddedForYouWithPasswordReset);
   }
 }

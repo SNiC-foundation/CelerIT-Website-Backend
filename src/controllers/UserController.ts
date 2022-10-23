@@ -5,6 +5,7 @@ import express from 'express';
 import UserService from '../services/UserService';
 import User, { PersonalUserParams, UserParams } from '../entities/User';
 import { ApiError, HTTPStatus } from '../helpers/error';
+import AuthService from '../services/AuthService';
 
 /**
  * TODO: Add paramater validation
@@ -40,7 +41,9 @@ export class UserController extends Controller {
   @Post()
   @Security('local', ['Admin'])
   public async createUser(@Body() params: UserParams): Promise<User> {
-    return new UserService().createUser(params);
+    const user = await new UserService().createUser(params);
+    await new AuthService().createIdentityLocal(user, false, false);
+    return user;
   }
 
   /**

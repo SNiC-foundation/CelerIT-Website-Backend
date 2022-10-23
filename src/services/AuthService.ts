@@ -11,6 +11,7 @@ import { getDataSource } from '../database/dataSource';
 import { Mailer, PasswordReset, WelcomeWithReset } from '../mailer';
 import { TicketActivated } from '../mailer/templates';
 import UserService from './UserService';
+import AccountForYou from '../mailer/templates/AccountForYou';
 
 const INVALID_TOKEN = 'Invalid token.';
 export interface AuthStatus {
@@ -84,7 +85,11 @@ export default class AuthService {
     }));
   }
 
-  async createIdentityLocal(user: User, silent: boolean): Promise<LocalAuthenticator> {
+  async createIdentityLocal(
+    user: User,
+    createdYourself: boolean,
+    silent: boolean,
+  ): Promise<LocalAuthenticator> {
     let identity = await this.LocalAuthenticatorRepo.findOneBy({ userId: user.id });
     if (identity) throw new ApiError(HTTPStatus.BadRequest, 'Identity already exists.');
 
@@ -98,11 +103,19 @@ export default class AuthService {
     identity = (await this.LocalAuthenticatorRepo.findOneBy({ userId: user.id }))!;
 
     if (!silent) {
-      Mailer.getInstance().send(user, new WelcomeWithReset({
-        name: user.name,
-        email: user.email,
-        token: this.getSetPasswordToken(user, identity),
-      }));
+      if (createdYourself) {
+        Mailer.getInstance().send(user, new WelcomeWithReset({
+          name: user.name,
+          email: user.email,
+          token: this.getSetPasswordToken(user, identity),
+        }));
+      } else {
+        Mailer.getInstance().send(user, new AccountForYou({
+          name: user.name,
+          email: user.email,
+          token: this.getSetPasswordToken(user, identity),
+        }));
+      }
     }
 
     return identity!;
