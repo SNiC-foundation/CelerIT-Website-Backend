@@ -16,7 +16,7 @@ export class RoleController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async getAllRoles(): Promise<Role[]> {
     return new RoleService().getAllRoles();
   }
@@ -26,7 +26,7 @@ export class RoleController extends Controller {
    * @param id ID of role to retrieve
    */
   @Get('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async getRole(id: number): Promise<Role> {
     return new RoleService().getRole(id);
   }
@@ -36,7 +36,7 @@ export class RoleController extends Controller {
    * @param params Parameters to create role with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createRole(@Body() params: RoleParams): Promise<Role> {
     return new RoleService().createRole(params);
   }
@@ -47,7 +47,7 @@ export class RoleController extends Controller {
    * @param params Update subset of parameter of role
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updateRole(id: number, @Body() params: Partial<RoleParams>): Promise<Role> {
     return new RoleService().updateRole(id, params);
   }
@@ -57,7 +57,7 @@ export class RoleController extends Controller {
    * @param id ID of the role to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteRole(id: number): Promise<void> {
     return new RoleService().deleteRole(id);
   }

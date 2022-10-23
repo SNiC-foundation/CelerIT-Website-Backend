@@ -34,7 +34,7 @@ export class ProgramPartController extends Controller {
    * @param params Parameters to create programPart with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createProgramPart(@Body() params: ProgramPartParams): Promise<ProgramPart> {
     return new ProgramPartService().createProgramPart(params);
   }
@@ -45,7 +45,7 @@ export class ProgramPartController extends Controller {
    * @param params Update subset of parameter of programPart
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updateProgramPart(id: number, @Body() params: Partial<ProgramPartParams>):
       Promise<ProgramPart> {
     return new ProgramPartService().updateProgramPart(id, params);
@@ -56,7 +56,7 @@ export class ProgramPartController extends Controller {
    * @param id ID of the programPart to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteProgramPart(id: number): Promise<void> {
     return new ProgramPartService().deleteProgramPart(id);
   }

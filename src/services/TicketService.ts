@@ -70,7 +70,9 @@ export default class TicketService {
       relations: {
         scans: true,
         user: {
-          subscriptions: true,
+          subscriptions: {
+            activity: true,
+          },
           participantInfo: true,
         },
       },

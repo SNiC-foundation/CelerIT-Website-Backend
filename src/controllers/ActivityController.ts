@@ -38,7 +38,7 @@ export class ActivityController extends Controller {
    * @param params Parameters to create activity with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createActivity(@Body() params: ActivityParams): Promise<Activity> {
     return new ActivityService().createActivity(params);
   }
@@ -49,7 +49,7 @@ export class ActivityController extends Controller {
    * @param params Update subset of parameter of activity
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updateActivity(
     id: number, @Body()
     params: ActivityParams,
@@ -62,7 +62,7 @@ export class ActivityController extends Controller {
    * @param id ID of the activity to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteActivity(id: number): Promise<void> {
     return new ActivityService().deleteActivity(id);
   }
