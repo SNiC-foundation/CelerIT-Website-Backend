@@ -40,12 +40,12 @@ export default class MailTemplate<T> {
   getOptions(): Mail.Options {
     const { text, html, subject } = this.mailContent.getContent(this.contentOptions);
 
-    let htmlTemplate = fs.readFileSync(path.join(__dirname, './container.html')).toString();
+    let htmlTemplate = fs.readFileSync(path.join(__dirname, '../../../static/container.html')).toString();
     htmlTemplate = htmlTemplate.replaceAll('{{url}}', process.env.URL || '');
     htmlTemplate = htmlTemplate.replaceAll('{{title}}', subject || '');
     htmlTemplate = htmlTemplate.replace('{{content}}', html);
 
-    let textTemplate = fs.readFileSync(path.join(__dirname, './container.txt')).toString();
+    let textTemplate = fs.readFileSync(path.join(__dirname, '../../../static/container.txt')).toString();
     textTemplate = textTemplate.replace('{{content}}', text);
 
     return {
