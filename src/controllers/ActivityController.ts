@@ -2,7 +2,7 @@ import {
   Body, Controller, Delete, Get, Post, Put, Request, Route, Security, Tags,
 } from 'tsoa';
 import express from 'express';
-import ActivityService from '../services/ActivityService';
+import ActivityService, { ActivityResponse } from '../services/ActivityService';
 import Activity, { ActivityParams } from '../entities/Activity';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import UserService from '../services/UserService';
@@ -20,7 +20,7 @@ export class ActivityController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
-  public async getAllActivities(): Promise<Activity[]> {
+  public async getAllActivities(): Promise<ActivityResponse[]> {
     return new ActivityService().getAllActivities();
   }
 

@@ -6,6 +6,11 @@ import SubscribeActivityService from './SubscribeActivityService';
 import Speaker from '../entities/Speaker';
 import User from '../entities/User';
 
+export interface ActivityResponse {
+  activity: Activity;
+  nrOfSubscribers: number;
+}
+
 export default class ActivityService {
   repo: Repository<Activity>;
 
@@ -16,13 +21,25 @@ export default class ActivityService {
   /**
    * Get all Activities
    */
-  public async getAllActivities(): Promise<Activity[]> {
-    return this.repo.find({
+  public async getAllActivities(): Promise<ActivityResponse[]> {
+    return (await this.repo.find({
       relations: {
         speakers: true,
-        subscribe: true,
+        subscribe: {
+          subscribers: true,
+        },
       },
-    });
+    })).map((act): ActivityResponse => ({
+      activity: {
+        ...act,
+        // @ts-ignore
+        subscribe: act.subscribe != null ? {
+          ...act.subscribe,
+          subscribers: [],
+        } : null,
+      },
+      nrOfSubscribers: act.subscribe != null ? act.subscribe.subscribers.length : 0,
+    }));
   }
 
   /**
