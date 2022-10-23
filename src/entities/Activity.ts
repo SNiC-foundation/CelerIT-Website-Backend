@@ -34,12 +34,12 @@ export default class Activity extends BaseEnt {
     programPart: ProgramPart;
 
   @Column({ type: 'text', nullable: true })
-    description?: string;
+    description?: string | null;
 
   @ManyToMany(() => Speaker)
   @JoinTable()
     speakers: Speaker[];
 
-  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'], eager: true })
-    subscribe?: SubscribeActivity;
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'] })
+    subscribe?: SubscribeActivity | null;
 }

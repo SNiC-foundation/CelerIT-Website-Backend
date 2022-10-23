@@ -5,8 +5,12 @@ import { getDataSource } from '../database/dataSource';
 import ParticipantService from './ParticipantService';
 import Ticket from '../entities/Ticket';
 import Role from '../entities/Role';
-import { TicketActivated } from '../mailer';
+// eslint-disable-next-line import/no-cycle
 import AuthService from './AuthService';
+
+export interface GetUserParams {
+  subscriptions: boolean;
+}
 
 export default class UserService {
   repo: Repository<User>;
@@ -18,16 +22,21 @@ export default class UserService {
   /**
    * Get all Users
    */
-  public async getAllUsers(): Promise<User[]> {
-    return this.repo.find({ relations: ['ticket', 'roles'] });
+  public async getAllUsers(params?: GetUserParams): Promise<User[]> {
+    const relations = ['ticket', 'roles'];
+    if (params && params.subscriptions) relations.push('subscriptions');
+    return this.repo.find({ relations });
   }
 
   /**
    * Get one User
    * TODO: Add relations in findOne()
    */
-  async getUser(id: number): Promise<User> {
-    const user = await this.repo.findOne({ where: { id }, relations: ['ticket', 'roles'] });
+  async getUser(id: number, params?: GetUserParams): Promise<User> {
+    const relations = ['ticket', 'roles'];
+    if (params && params.subscriptions) relations.push('subscriptions');
+
+    const user = await this.repo.findOne({ where: { id }, relations });
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
     }
