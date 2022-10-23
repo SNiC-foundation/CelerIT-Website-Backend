@@ -2,7 +2,7 @@ import {
   Controller, Get, Post, Delete, Route, Body, Tags, Put, Security,
 } from 'tsoa';
 import UserService from '../services/UserService';
-import User, { UserParams } from '../entities/User';
+import User, { PersonalUserParams, UserParams } from '../entities/User';
 
 /**
  * TODO: Add paramater validation
@@ -50,6 +50,31 @@ export class UserController extends Controller {
   @Security('local')
   public async updateUser(id: number, @Body() params: Partial<UserParams>): Promise<User> {
     return new UserService().updateUser(id, params);
+  }
+
+  /**
+   * updateUser() - update your own profile
+   * @param id ID of user to update
+   * @param params Update subset of parameter of user
+   */
+  @Put('{id}/profile')
+  @Security('local')
+  public async updateUserProfile(
+    id: number,
+    @Body() params: Partial<PersonalUserParams>,
+  ): Promise<User> {
+    return new UserService().updateUserProfile(id, params);
+  }
+
+  /**
+   * updateUserRoles() - update user roles
+   * @param id ID of user to update
+   * @param roleIds IDs of all roles this user should have
+   */
+  @Put('{id}/roles')
+  @Security('local')
+  public async updateUserRoles(id: number, @Body() roleIds: number[]): Promise<User> {
+    return new UserService().updateUserRoles(id, roleIds);
   }
 
   /**

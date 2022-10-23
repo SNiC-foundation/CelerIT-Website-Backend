@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Route, Body, Tags, Query, Security,
+  Controller, Get, Post, Route, Body, Tags, Query, Security, Delete,
 } from 'tsoa';
 import Ticket from '../entities/Ticket';
 import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../services/TicketService';
@@ -49,13 +49,14 @@ export class TicketController extends Controller {
   // public async updateTicket(id: number, @Body() params: Partial<UserParams>): Promise<User> {
   //   return new UserService().updateUser(id, params);
   // }
-  //
-  // /**
-  //  * Delete user
-  //  * @param id ID of the user to delete
-  //  */
-  // @Delete('{id}')
-  // public async deleteUser(id: number): Promise<void> {
-  //   return new UserService().deleteUser(id);
-  // }
+
+  /**
+   * Delete user
+   * @param id ID of the user to delete
+   */
+  @Delete('{id}')
+  @Security('local')
+  public async deleteTicket(id: number): Promise<void> {
+    return new TicketService().deleteTicket(id);
+  }
 }

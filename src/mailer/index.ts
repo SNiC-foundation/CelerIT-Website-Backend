@@ -17,5 +17,5 @@
  */
 
 // eslint-disable-next-line no-restricted-exports
-export { default as Mailer } from './mailer';
+export { default as Mailer } from './Mailer';
 export * from './templates';

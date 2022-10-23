@@ -8,6 +8,8 @@ import User, { CreateParticipantUserParams } from '../entities/User';
 import TicketService from '../services/TicketService';
 import UserService from '../services/UserService';
 import AuthService, { ForgotPasswordRequest, ResetPasswordRequest } from '../services/AuthService';
+import BarcodeGenerator from '../qrcodes/BarcodeGenerator';
+import { barcodeDirLoc } from '../services/FileService';
 
 export interface RegisterUserParams {
   user: CreateParticipantUserParams,
@@ -28,12 +30,13 @@ export class AuthController extends Controller {
     if (ticket === null) throw new ApiError(HTTPStatus.BadRequest, 'Invalid Token');
     const user = await new UserService().registerUser({
       ...params.user,
+      partnerId: null,
       participantInfo: {
         ...params.user.participantInfo,
-        studyAssociation: ticket.association,
       },
     }, ticket);
     await new AuthService().createIdentityLocal(user, false);
+    new BarcodeGenerator(ticket.code, barcodeDirLoc).generateCode();
     return user;
   }
 

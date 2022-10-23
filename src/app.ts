@@ -10,7 +10,9 @@ import { initializeDataSource } from './database/dataSource';
 import { config, localLogin } from './authentication/LocalStrategy';
 import * as swaggerJson from './public/swagger.json';
 import { validationErrorHandler } from './helpers/error';
-import { uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir } from './services/FileService';
+import {
+  barcodeDirLoc, uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
+} from './services/FileService';
 
 /**
  * Setup session support.
@@ -43,7 +45,7 @@ function createApp(): void {
   initializeDataSource().then(() => {
     const app = express();
 
-    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir].forEach((loc) => {
+    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir, barcodeDirLoc].forEach((loc) => {
       if (!fs.existsSync(path.join(__dirname, '../', loc))) {
         fs.mkdirSync(path.join(__dirname, '../', loc));
       }
@@ -52,7 +54,6 @@ function createApp(): void {
     // Use body parser to read sent json payloads
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
-    app.use(validationErrorHandler);
 
     setupSessionSupport(app);
     app.post('/api/login', localLogin);
@@ -61,9 +62,11 @@ function createApp(): void {
       app.use(['/api/openapi', '/api/docs', '/api/swagger', '/api/swagger-ui'], swaggerUI.serve, swaggerUI.setup(swaggerJson));
       app.use('/api/static/partners', express.static(path.join(__dirname, '/../', uploadPartnerLogoDir)));
       app.use('/api/static/speakers', express.static(path.join(__dirname, '/../', uploadSpeakerImageDir)));
+      app.use('/api/static/barcodes', express.static(path.join(__dirname, '/../', barcodeDirLoc)));
     }
 
     RegisterRoutes(app);
+    app.use(validationErrorHandler);
 
     const port = process.env.PORT || 3001;
     // eslint-disable-next-line no-console

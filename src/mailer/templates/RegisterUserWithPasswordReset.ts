@@ -15,50 +15,43 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import MailTemplate from './mail-template';
-import signature from './signature';
-import MailContent from './mail-content';
+import MailTemplate from './MailTemplate';
+import MailContent from './MailContent';
 
-interface WelcomeWithResetOptions {
+interface RegisterUserWithPasswordReset {
   name: string;
   email: string,
   token: string,
   url?: string;
 }
 
-const welcomeWithReset = new MailContent<WelcomeWithResetOptions>({
+const registerParticipantWithPasswordReset = new MailContent<RegisterUserWithPasswordReset>({
   getHTML: (context) => `
 <p>Dear ${context.name},</p>
-
-<p>You have finished the first steps of activating your SNiC 2022: CelerIT ticket.</p>
-
-<p>To finish the activation process, you have to set a password by going to ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.</p>
-
-<p>If your password is set, you can login into the website to register for the tracks. Note that this is only possible from October 31st onward!</p>
-
-${signature}`,
+<p>You have finished the first steps of creating your account for SNiC 2022: CelerIT.</p>
+<p>To finish the creation process, you have to set a password by going to
+    <a href="${context.url}/reset-password?token=${context.token}&email=${context.email}">to this link</a>
+. If the link has expired, you can reset your password on the website.</p>
+<p>If your password is set, you can log in into the website.</p>`,
   getSubject: () => 'Finish registering for SNiC 2022: CelerIT',
   getText: (context) => `
 Dear ${context.name},
 
-You have just finished the first steps of activating your SNiC 2022: CelerIT ticket.
+You have just finished the first steps of creating your account SNiC 2022: CelerIT.
 
 To finish the activation process, you have to set a password by going to ${`${context.url}/reset-password?token=${context.token}&email=${context.email}`}. If this link has expired, you can reset your password on the website.
 
-If your password is set, you can login into the website to register for the tracks. Note that this is only possible from October 31st onward!
-
-Kind regards,
-The SNiC 2022: CelerIT committee`,
+If your password is set, you can log in into the website.`,
 });
 
-export default class WelcomeWithReset extends MailTemplate<WelcomeWithResetOptions> {
-  public constructor(options: WelcomeWithResetOptions) {
-    const opt: WelcomeWithResetOptions = {
+export default class WelcomeWithReset extends MailTemplate<RegisterUserWithPasswordReset> {
+  public constructor(options: RegisterUserWithPasswordReset) {
+    const opt: RegisterUserWithPasswordReset = {
       ...options,
     };
     if (!options.url) {
       opt.url = process.env.URL;
     }
-    super(opt, welcomeWithReset);
+    super(opt, registerParticipantWithPasswordReset);
   }
 }

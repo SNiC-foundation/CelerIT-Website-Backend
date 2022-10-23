@@ -2,6 +2,7 @@ import {
   Column, Entity, JoinColumn, OneToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
+// eslint-disable-next-line import/no-cycle
 import User from './User';
 
 export interface TicketParams {
@@ -11,15 +12,15 @@ export interface TicketParams {
 @Entity()
 export default class Ticket extends BaseEnt {
     @Column({ type: 'integer', nullable: true })
-      userId: number;
+      userId?: number | null;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'userId' })
-      user: User;
+      user?: User | null;
 
     @Column({ default: '' })
       association: string;
 
-    @Column()
+    @Column({ unique: true })
       code: string;
 }

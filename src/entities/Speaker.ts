@@ -1,4 +1,6 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import {
+  Column, Entity, JoinTable, ManyToMany,
+} from 'typeorm';
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
 import Activity from './Activity';
@@ -16,7 +18,8 @@ export default class Speaker extends BaseEnt {
   @Column({ type: 'text' })
     description: string;
 
-  @OneToMany(() => Activity, (act) => act.speaker, { nullable: true })
+  @ManyToMany(() => Activity, (act) => act.speakers)
+  @JoinTable()
     activities: Activity[];
 
   @Column({ nullable: true })

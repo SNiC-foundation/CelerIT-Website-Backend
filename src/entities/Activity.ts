@@ -1,5 +1,5 @@
 import {
-  Column, Entity, JoinColumn, ManyToOne, OneToOne,
+  Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 // eslint-disable-next-line import/no-cycle
@@ -14,7 +14,7 @@ export interface ActivityParams {
   programPartId: number;
   description?: string;
   image?: string;
-  speakerId?: number;
+  speakerIds?: number[];
   subscribe?: UpdateSubscribeActivityParams;
 }
 
@@ -34,18 +34,12 @@ export default class Activity extends BaseEnt {
     programPart: ProgramPart;
 
   @Column({ type: 'text', nullable: true })
-    description?: string;
+    description?: string | null;
 
-  @Column({ nullable: true })
-    image?: string;
+  @ManyToMany(() => Speaker)
+  @JoinTable()
+    speakers: Speaker[];
 
-  @Column({ nullable: true, type: 'integer' })
-    speakerId?: number;
-
-  @ManyToOne(() => Speaker, { nullable: true })
-  @JoinColumn({ name: 'speakerId' })
-    speaker?: Speaker;
-
-  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'], eager: true })
-    subscribe?: SubscribeActivity;
+  @OneToOne(() => SubscribeActivity, (sub) => sub.activity, { nullable: true, cascade: ['insert', 'remove'] })
+    subscribe?: SubscribeActivity | null;
 }

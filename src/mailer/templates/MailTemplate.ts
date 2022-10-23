@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import Mail from 'nodemailer/lib/mailer';
-import MailContent from './mail-content';
+import * as fs from 'fs';
+import path from 'path';
+import MailContent from './MailContent';
 
 export default class MailTemplate<T> {
   protected baseMailOptions: Mail.Options = {
@@ -38,10 +40,18 @@ export default class MailTemplate<T> {
   getOptions(): Mail.Options {
     const { text, html, subject } = this.mailContent.getContent(this.contentOptions);
 
+    let htmlTemplate = fs.readFileSync(path.join(__dirname, './container.html')).toString();
+    htmlTemplate = htmlTemplate.replaceAll('{{url}}', process.env.URL || '');
+    htmlTemplate = htmlTemplate.replaceAll('{{title}}', subject || '');
+    htmlTemplate = htmlTemplate.replace('{{content}}', html);
+
+    let textTemplate = fs.readFileSync(path.join(__dirname, './container.txt')).toString();
+    textTemplate = textTemplate.replace('{{content}}', text);
+
     return {
       ...this.baseMailOptions,
-      text,
-      html,
+      text: textTemplate,
+      html: htmlTemplate,
       subject,
     };
   }

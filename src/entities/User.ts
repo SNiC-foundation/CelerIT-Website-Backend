@@ -1,11 +1,16 @@
 import {
-  Column, Entity, JoinTable, ManyToMany, OneToOne,
+  Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 import Role from './Role';
 // eslint-disable-next-line import/no-cycle
 import Participant, { UpdateParticipantParams } from './Participant';
+// eslint-disable-next-line import/no-cycle
 import Ticket from './Ticket';
+// eslint-disable-next-line import/no-cycle
+import Partner from './Partner';
+// eslint-disable-next-line import/no-cycle
+import SubscribeActivity from './SubscribeActivity';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -14,16 +19,19 @@ export interface CreateParticipantUserParams {
   agreeToPrivacyPolicy: boolean;
   participantInfo: {
     studyProgram: string;
-    agreeToSharingWithCompanies: boolean;
   }
 }
 
-export interface UserParams {
-  email: string;
+export interface PersonalUserParams {
   name: string;
   dietaryWishes: string;
-  agreeToPrivacyPolicy: boolean;
   participantInfo?: UpdateParticipantParams;
+}
+
+export interface UserParams extends PersonalUserParams {
+  email: string;
+  agreeToPrivacyPolicy: boolean;
+  partnerId?: number | null;
 }
 
 @Entity()
@@ -33,6 +41,9 @@ export default class User extends BaseEnt {
 
   @Column()
     name: string;
+
+  @Column({ default: false })
+    emailVerified: boolean;
 
   @Column({ type: 'text', default: '' })
     dietaryWishes: string;
@@ -47,6 +58,17 @@ export default class User extends BaseEnt {
   @JoinTable()
     roles: Role[];
 
-  @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true, eager: true })
+  @OneToOne(() => Ticket, (ticket) => ticket.user, { nullable: true, onDelete: 'SET NULL' })
     ticket?: Ticket;
+
+  @Column({ nullable: true })
+    partnerId?: number | null;
+
+  @ManyToOne(() => Partner, { nullable: true })
+  @JoinColumn({ name: 'partnerId' })
+    partner?: Partner | null;
+
+  @ManyToMany(() => SubscribeActivity, (act) => act.subscribers)
+  @JoinTable()
+    subscriptions: SubscribeActivity[];
 }

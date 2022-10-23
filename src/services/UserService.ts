@@ -1,11 +1,16 @@
-import { Repository } from 'typeorm';
-import faker from '@faker-js/faker';
-import crypto from 'crypto';
-import User, { UserParams } from '../entities/User';
-import { HTTPStatus, ApiError } from '../helpers/error';
+import { In, Repository } from 'typeorm';
+import User, { PersonalUserParams, UserParams } from '../entities/User';
+import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import ParticipantService from './ParticipantService';
 import Ticket from '../entities/Ticket';
+import Role from '../entities/Role';
+// eslint-disable-next-line import/no-cycle
+import AuthService from './AuthService';
+
+export interface GetUserParams {
+  subscriptions: boolean;
+}
 
 export default class UserService {
   repo: Repository<User>;
@@ -17,16 +22,21 @@ export default class UserService {
   /**
    * Get all Users
    */
-  public async getAllUsers(): Promise<User[]> {
-    return this.repo.find();
+  public async getAllUsers(params?: GetUserParams): Promise<User[]> {
+    const relations = ['ticket', 'roles'];
+    if (params && params.subscriptions) relations.push('subscriptions');
+    return this.repo.find({ relations });
   }
 
   /**
    * Get one User
    * TODO: Add relations in findOne()
    */
-  async getUser(id: number): Promise<User> {
-    const user = await this.repo.findOne({ where: { id } });
+  async getUser(id: number, params?: GetUserParams): Promise<User> {
+    const relations = ['ticket', 'roles'];
+    if (params && params.subscriptions) relations.push('subscriptions');
+
+    const user = await this.repo.findOne({ where: { id }, relations });
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
     }
@@ -39,6 +49,7 @@ export default class UserService {
   createUser(params: UserParams): Promise<User> {
     const user = {
       ...params,
+      emailVerified: true,
     } as any as User;
     return this.repo.save(user);
   }
@@ -50,6 +61,7 @@ export default class UserService {
     return Promise.resolve(getDataSource().manager.transaction((manager) => {
       const user = Object.assign(new User(), {
         ...params,
+        emailVerified: false,
       }) as User;
       return manager.save(user).then((u) => {
         // eslint-disable-next-line no-param-reassign
@@ -63,6 +75,18 @@ export default class UserService {
    * Update User
    */
   async updateUser(id: number, params: Partial<UserParams>): Promise<User> {
+    // eslint-disable-next-line no-param-reassign
+    if (!params.partnerId) params.partnerId = null;
+    return this.updateUserProfile(id, params);
+  }
+
+  /**
+   * Update User (personal)
+   */
+  async updateUserProfile(
+    id: number,
+    params: Partial<UserParams> | Partial<PersonalUserParams>,
+  ): Promise<User> {
     const { participantInfo, ...rest } = params;
     await this.repo.update(id, rest);
     const user = await this.getUser(id);
@@ -86,11 +110,29 @@ export default class UserService {
   }
 
   /**
+   * Update the roles of a user
+   * @param id
+   * @param roleIds
+   */
+  async updateUserRoles(id: number, roleIds: number[]): Promise<User> {
+    const user = await this.getUser(id);
+
+    if (user == null) {
+      throw new ApiError(HTTPStatus.NotFound);
+    }
+
+    user.roles = await getDataSource().getRepository(Role).find({ where: { id: In(roleIds) } });
+    await this.repo.save(user);
+
+    return this.getUser(id);
+  }
+
+  /**
    * Delete User
    * TODO: Add relations in findOne()
    */
   async deleteUser(id: number): Promise<void> {
-    const user = await this.repo.findOne({ where: { id } });
+    const user = await this.repo.findOne({ where: { id }, relations: ['participantInfo', 'ticket'] });
 
     if (user == null) {
       throw new ApiError(HTTPStatus.NotFound, 'User not found');
@@ -99,6 +141,17 @@ export default class UserService {
     if (user.participantInfo != null) {
       await new ParticipantService().deleteParticipant(user.participantInfo.id);
     }
+
+    if (user.ticket != null) {
+      const ticketRepo = getDataSource().getRepository(Ticket);
+      const ticket = await ticketRepo.findOne({ where: { userId: user.id } });
+      if (ticket == null) throw new Error();
+      ticket.userId = null;
+      ticket.user = null;
+      await ticket.save();
+    }
+
+    await new AuthService().deleteIdentities(user.id);
 
     await this.repo.delete(user.id);
   }
