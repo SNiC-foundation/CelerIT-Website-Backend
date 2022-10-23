@@ -57,9 +57,8 @@ describe('Authentication', () => {
 
     it('should return the user if valid credentials', async () => {
       const auth = await authFactory.createSingle();
-      expect(await promisedVerification(auth.user.email, auth.user.name)).to.deep.eq(
-        { user: auth, options: undefined },
-      );
+      const res = (await promisedVerification(auth.user.email, auth.user.name)) as any;
+      expect(res.user.user.name).to.eq(auth.user.name);
     });
     it('should return false if the credentials are invalid', async () => {
       const auth = await authFactory.createSingle();
