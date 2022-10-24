@@ -35,7 +35,7 @@ export default class SubscribeActivity extends BaseEnt {
   @Column()
     subscriptionListCloseDate: Date;
 
-  @ManyToMany(() => User, { onDelete: 'RESTRICT' })
+  @ManyToMany(() => User, (user) => user.subscriptions, { onDelete: 'RESTRICT' })
   @JoinTable()
     subscribers: User[];
 }
