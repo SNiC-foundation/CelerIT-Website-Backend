@@ -1,5 +1,5 @@
 import {
-  Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne,
+  Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
 import Role from './Role';
@@ -11,6 +11,8 @@ import Ticket from './Ticket';
 import Partner from './Partner';
 // eslint-disable-next-line import/no-cycle
 import SubscribeActivity from './SubscribeActivity';
+// eslint-disable-next-line import/no-cycle
+import TicketScan from './TicketScan';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -71,4 +73,7 @@ export default class User extends BaseEnt {
   @ManyToMany(() => SubscribeActivity, (act) => act.subscribers)
   @JoinTable()
     subscriptions: SubscribeActivity[];
+
+  @OneToMany(() => TicketScan, (scan) => scan.user)
+    scans: TicketScan[];
 }

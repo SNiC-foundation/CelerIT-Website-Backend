@@ -36,7 +36,7 @@ export class PartnerController extends Controller {
    * @param params Parameters to create partner with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createPartner(@Body() params: PartnerParams): Promise<Partner> {
     return new PartnerService().createPartner(params);
   }
@@ -47,7 +47,7 @@ export class PartnerController extends Controller {
    * @param params Update subset of parameter of partner
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updatePartner(id: number, @Body() params: Partial<PartnerParams>): Promise<Partner> {
     return new PartnerService().updatePartner(id, params);
   }
@@ -57,7 +57,7 @@ export class PartnerController extends Controller {
    * @param id ID of the partner to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deletePartner(id: number): Promise<void> {
     return new PartnerService().deletePartner(id);
   }
@@ -66,7 +66,7 @@ export class PartnerController extends Controller {
    * Upload a logo for a partner
    */
   @Put('{id}/logo')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async uploadPartnerLogo(@UploadedFile() logo: Express.Multer.File, id: number) {
     await FileService.uploadPartnerLogo(logo, id);
   }
@@ -76,6 +76,7 @@ export class PartnerController extends Controller {
    * @param encryptedID Encrypted participant ID of the scanned participant
    */
   @Post('{id}/scanqr')
+  @Security('local', ['Partner'])
   public async requestScan(id: number, @Body() params: QRParams): Promise<void> {
     return new PartnerService().requestScan(id, params);
   }

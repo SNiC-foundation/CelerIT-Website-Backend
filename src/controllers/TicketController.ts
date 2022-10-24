@@ -1,8 +1,10 @@
 import {
-  Controller, Get, Post, Route, Body, Tags, Query, Security, Delete,
+  Controller, Get, Post, Route, Body, Tags, Query, Security, Delete, Request,
 } from 'tsoa';
+import express from 'express';
 import Ticket from '../entities/Ticket';
 import TicketService, { CreateTicketPrams, TicketFilterParameters } from '../services/TicketService';
+import User from '../entities/User';
 
 /**
  * TODO: Add paramater validation
@@ -15,9 +17,11 @@ export class TicketController extends Controller {
    * TODO: Add filter options
    */
   @Get('')
-  @Security('local')
-  public async getAllTickets(@Query() claimed?: boolean, @Query() association?: string)
-        : Promise<Ticket[]> {
+  @Security('local', ['Admin'])
+  public async getAllTickets(
+    @Query() claimed?: boolean,
+    @Query() association?: string,
+  ): Promise<Ticket[]> {
     const filters: TicketFilterParameters = {
       claimed,
       association,
@@ -30,32 +34,31 @@ export class TicketController extends Controller {
     return new TicketService().getSingleTicket(code);
   }
 
+  @Get('{code}/scan')
+  @Security('local', ['Admin', 'Volunteer'])
+  public async scanSingleTicket(
+    code: string,
+    @Request() request: express.Request,
+  ): Promise<Ticket | null> {
+    return new TicketService().scanTicket(code, request.user as User);
+  }
+
   /**
    * createTicket() - create ticket
    * @param params Parameters to create tickets with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createTicket(@Body() params: CreateTicketPrams): Promise<Ticket[]> {
     return new TicketService().createTickets(params);
   }
-
-  // /**
-  //  * updateUser() - update user
-  //  * @param id ID of user to update
-  //  * @param params Update subset of parameter of user
-  //  */
-  // @Put('{id}')
-  // public async updateTicket(id: number, @Body() params: Partial<UserParams>): Promise<User> {
-  //   return new UserService().updateUser(id, params);
-  // }
 
   /**
    * Delete user
    * @param id ID of the user to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteTicket(id: number): Promise<void> {
     return new TicketService().deleteTicket(id);
   }

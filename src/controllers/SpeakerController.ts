@@ -37,7 +37,7 @@ export class SpeakerController extends Controller {
    * @param params Parameters to create speaker with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createSpeaker(@Body() params: SpeakerParams): Promise<Speaker> {
     return new SpeakerService().createSpeaker(params);
   }
@@ -48,7 +48,7 @@ export class SpeakerController extends Controller {
    * @param params Update subset of parameter of speaker
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updateSpeaker(id: number, @Body() params: Partial<SpeakerParams>): Promise<Speaker> {
     return new SpeakerService().updateSpeaker(id, params);
   }
@@ -58,7 +58,7 @@ export class SpeakerController extends Controller {
    * @param id ID of the speaker to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteSpeaker(id: number): Promise<void> {
     return new SpeakerService().deleteSpeaker(id);
   }
@@ -67,7 +67,7 @@ export class SpeakerController extends Controller {
    * Upload an image for a speaker
    */
   @Put('{id}/image')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async uploadSpeakerImage(@UploadedFile() logo: Express.Multer.File, id: number) {
     await FileService.uploadSpeakerImage(logo, id);
   }

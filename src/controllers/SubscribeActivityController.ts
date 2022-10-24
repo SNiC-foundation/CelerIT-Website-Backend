@@ -37,7 +37,7 @@ export class SubscribeActivityController extends Controller {
    * @param params Parameters to create subscribeActivity with
    */
   @Post()
-  @Security('local')
+  @Security('local', ['Admin'])
   public async createSubscribeActivity(@Body() params: CreateSubscribeActivityParams)
       : Promise<SubscribeActivity> {
     return new SubscribeActivityService().createSubscribeActivity(params);
@@ -49,7 +49,7 @@ export class SubscribeActivityController extends Controller {
    * @param params Update subset of parameter of subscribeActivity
    */
   @Put('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async updateSubscribeActivity(
     id: number,
     @Body() params: Partial<UpdateSubscribeActivityParams>,
@@ -63,7 +63,7 @@ export class SubscribeActivityController extends Controller {
    * @param id ID of the subscribeActivity to delete
    */
   @Delete('{id}')
-  @Security('local')
+  @Security('local', ['Admin'])
   public async deleteSubscribeActivity(id: number): Promise<void> {
     return new SubscribeActivityService().deleteSubscribeActivity(id);
   }

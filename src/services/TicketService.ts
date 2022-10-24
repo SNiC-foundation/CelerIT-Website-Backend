@@ -6,6 +6,8 @@ import bs58 from 'bs58';
 import { getDataSource } from '../database/dataSource';
 import Ticket, { TicketParams } from '../entities/Ticket';
 import { ApiError, HTTPStatus } from '../helpers/error';
+import TicketScan from '../entities/TicketScan';
+import User from '../entities/User';
 
 /**
  * @typedef TicketFilterParameters
@@ -29,8 +31,11 @@ export interface CreateTicketPrams extends TicketParams {
 export default class TicketService {
   repo: Repository<Ticket>;
 
+  ticketScanRepo: Repository<TicketScan>;
+
   constructor(repo?: Repository<Ticket>) {
     this.repo = repo !== undefined ? repo : getDataSource().getRepository(Ticket);
+    this.ticketScanRepo = getDataSource().getRepository(TicketScan);
   }
 
   /**
@@ -51,6 +56,39 @@ export default class TicketService {
   getSingleTicket(code: string): Promise<Ticket | null> {
     const ticket = this.repo.findOne({ where: { code }, relations: ['user'] });
     if (ticket == null) throw new ApiError(HTTPStatus.NotFound, 'Ticket not found.');
+    return ticket;
+  }
+
+  /**
+   * Scan ticket. Provides more info about the corresponding user and saves scan record
+   * @param code
+   * @param user
+   */
+  async scanTicket(code: string, user: User): Promise<Ticket | null> {
+    const ticket = await this.repo.findOne({
+      where: { code },
+      relations: {
+        scans: true,
+        user: {
+          subscriptions: {
+            activity: true,
+          },
+          participantInfo: true,
+        },
+      },
+    });
+    if (ticket == null) throw new ApiError(HTTPStatus.NotFound, 'Ticket not found.');
+
+    // Somehow the relation does not work. No idea why, no time to look for an actual fix
+    ticket.scans = await this.ticketScanRepo.find({
+      where: { ticketId: ticket.id },
+      relations: { user: true },
+    });
+    const scan = Object.assign(new TicketScan(), {
+      ticketId: ticket.id,
+      userId: user.id,
+    });
+    await this.ticketScanRepo.save(scan);
     return ticket;
   }
 
