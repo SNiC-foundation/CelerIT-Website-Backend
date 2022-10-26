@@ -54,7 +54,7 @@ export default class AuthService {
     return this.userRepo.findOne(
       {
         where: { id: (req.user as User).id },
-        relations: ['roles'],
+        relations: ['roles', 'subscriptions'],
       },
     );
   }
