@@ -54,12 +54,11 @@ export default class AuthService {
     return this.userRepo.findOne(
       {
         where: { id: (req.user as User).id },
-        relations: ['roles', 'subscriptions'],
+        relations: ['roles', 'subscriptions', 'subscriptions.activity'],
       },
     );
   }
 
-  // TODO: Fix logout not working correctly
   async logout(req: express.Request) : Promise<void> {
     return req.logout({ keepSessionInfo: false }, () => {});
   }
