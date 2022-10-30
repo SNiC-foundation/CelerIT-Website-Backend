@@ -26,6 +26,6 @@ export default class Ticket extends BaseEnt {
   @Column({ unique: true })
     code: string;
 
-  @OneToMany(() => TicketScan, (scan) => scan.user)
+  @OneToMany(() => TicketScan, (scan) => scan.ticket)
     scans: TicketScan[];
 }
