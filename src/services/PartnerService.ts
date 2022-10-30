@@ -24,8 +24,8 @@ export default class PartnerService {
    * Get one Partner
    * TODO: Add relations in findOne()
    */
-  async getPartner(id: number): Promise<Partner> {
-    const partner = await this.repo.findOne({ where: { id } });
+  async getPartner(id: number, relations?: string[]): Promise<Partner> {
+    const partner = await this.repo.findOne({ where: { id }, relations });
     if (partner == null) {
       throw new ApiError(HTTPStatus.NotFound, 'Partner not found');
     }
@@ -90,8 +90,6 @@ export default class PartnerService {
     } else {
       await this.logScan(id, participant);
     }
-
-    console.log(`id: ${decipher.output.toString()}`);
   }
 
   /**
@@ -99,7 +97,7 @@ export default class PartnerService {
    */
   async logScan(partnerId: number, participant: Participant): Promise<void> {
     // Store in scan table
-    const partner = await this.getPartner(partnerId);
+    const partner = await this.getPartner(partnerId, ['participants']);
 
     partner.participants.push(participant);
     await partner.save();
