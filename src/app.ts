@@ -5,22 +5,31 @@ import passport from 'passport';
 import * as swaggerUI from 'swagger-ui-express';
 import * as fs from 'fs';
 import path from 'path';
+import { TypeormStore } from 'connect-typeorm';
 import { RegisterRoutes } from './routes';
-import { initializeDataSource } from './database/dataSource';
+import { getDataSource, initializeDataSource } from './database/dataSource';
 import { config, localLogin } from './authentication/LocalStrategy';
 import * as swaggerJson from './public/swagger.json';
 import { validationErrorHandler } from './helpers/error';
 import {
   barcodeDirLoc, uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
 } from './services/FileService';
+import { Session } from './entities/Authentication/Session';
 
 /**
  * Setup session support.
  * @param app
  */
 export function setupSessionSupport(app: Express) {
+  const sessionRepo = getDataSource().getRepository(Session);
+
   // Setup session config
   const sess = {
+    store: new TypeormStore({
+      cleanupLimit: 2,
+      limitSubquery: false,
+      ttl: 84600,
+    }).connect(sessionRepo),
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: true,
