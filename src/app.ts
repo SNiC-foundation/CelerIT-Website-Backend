@@ -12,7 +12,7 @@ import { config, localLogin } from './authentication/LocalStrategy';
 import * as swaggerJson from './public/swagger.json';
 import { validationErrorHandler } from './helpers/error';
 import {
-  barcodeDirLoc, uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
+  barcodeDirLoc, qrCodeDirLoc, uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
 } from './services/FileService';
 import { Session } from './entities/Authentication/Session';
 
@@ -54,7 +54,8 @@ function createApp(): void {
   initializeDataSource().then(() => {
     const app = express();
 
-    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir, barcodeDirLoc].forEach((loc) => {
+    [uploadDirLoc, uploadPartnerLogoDir, uploadSpeakerImageDir,
+      barcodeDirLoc, qrCodeDirLoc].forEach((loc) => {
       if (!fs.existsSync(path.join(__dirname, '../', loc))) {
         fs.mkdirSync(path.join(__dirname, '../', loc));
       }

@@ -11,6 +11,7 @@ export const uploadDirLoc = 'data';
 export const uploadPartnerLogoDir = 'data/partners';
 export const uploadSpeakerImageDir = 'data/speakers';
 export const barcodeDirLoc = 'data/barcodes';
+export const qrCodeDirLoc = 'data/qrcodes';
 
 export default class FileService {
   private static removeFileAtLoc(location: string) {

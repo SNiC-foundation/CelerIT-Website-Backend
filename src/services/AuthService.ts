@@ -10,7 +10,6 @@ import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import { Mailer, PasswordReset, WelcomeWithReset } from '../mailer';
 import { TicketActivated } from '../mailer/templates';
-import UserService from './UserService';
 import AccountForYou from '../mailer/templates/AccountForYou';
 
 const INVALID_TOKEN = 'Invalid token.';

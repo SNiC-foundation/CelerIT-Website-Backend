@@ -81,7 +81,7 @@ export class ParticipantController extends Controller {
    */
   @Get('{id}/qrcode')
   @Security('local')
-  public async getEncryptedParticipantId(id: number): Promise<String> {
+  public async getEncryptedParticipantId(id: number): Promise<string> {
     return new ParticipantService().getEncryptedParticipantId(id);
   }
 }

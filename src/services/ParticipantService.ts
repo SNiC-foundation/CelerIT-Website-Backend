@@ -72,7 +72,7 @@ export default class ParticipantService {
   /**
    * Request encrypted participant ID
    */
-  async getEncryptedParticipantId(id: number): Promise<String> {
+  getEncryptedParticipantId(id: number): string {
     // Encrypt with private key, return
     const { key, iv } = keys;
 
