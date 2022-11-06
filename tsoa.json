@@ -16,12 +16,19 @@
         "schemas": {
           "LoginParams": {
             "dataType": "refObject",
+            "required": [
+              "email",
+              "password"
+            ],
             "properties": {
               "email": {
                 "type": "string"
               },
               "password": {
                 "type": "string"
+              },
+              "rememberMe": {
+                "type": "boolean"
               }
             },
             "additionalProperties": false
@@ -52,6 +59,9 @@
             },
             "security": [],
             "parameters": [],
+            "tags": [
+              "Authentication"
+            ],
             "requestBody": {
               "required": true,
               "content": {
