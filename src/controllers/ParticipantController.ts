@@ -84,4 +84,13 @@ export class ParticipantController extends Controller {
   public async getEncryptedParticipantId(id: number): Promise<string> {
     return new ParticipantService().getEncryptedParticipantId(id);
   }
+
+  /**
+   * Get all participants with their personal information for physical keycords
+   */
+  @Get('export/export')
+  @Security('local', ['Admin'])
+  public async getParticipantsExport() {
+    return new ParticipantService().getParticipantExport();
+  }
 }
