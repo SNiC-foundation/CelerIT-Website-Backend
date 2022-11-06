@@ -13,6 +13,8 @@ import Partner from './Partner';
 import SubscribeActivity from './SubscribeActivity';
 // eslint-disable-next-line import/no-cycle
 import TicketScan from './TicketScan';
+// eslint-disable-next-line import/no-cycle
+import LocalAuthenticator from './Authentication/LocalAuthenticator';
 
 export interface CreateParticipantUserParams {
   email: string;
@@ -76,4 +78,7 @@ export default class User extends BaseEnt {
 
   @OneToMany(() => TicketScan, (scan) => scan.user)
     scans: TicketScan[];
+
+  @OneToOne(() => LocalAuthenticator, (auth) => auth.user, { nullable: true })
+    identity?: LocalAuthenticator;
 }

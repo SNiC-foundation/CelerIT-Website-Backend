@@ -1,4 +1,6 @@
-import { In, Repository } from 'typeorm';
+import {
+  In, IsNull, LessThanOrEqual, Not, Repository,
+} from 'typeorm';
 import User, { PersonalUserParams, UserParams } from '../entities/User';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
@@ -7,9 +9,17 @@ import Ticket from '../entities/Ticket';
 import Role from '../entities/Role';
 // eslint-disable-next-line import/no-cycle
 import AuthService from './AuthService';
+import { Mailer } from '../mailer';
+import SetPasswordReminder from '../mailer/templates/SetPasswordReminder';
+import TracksReminder from '../mailer/templates/TracksReminder';
 
 export interface GetUserParams {
   subscriptions: boolean;
+}
+
+export interface SendSetPasswordReminderParams {
+  ids: number[];
+  date: Date;
 }
 
 export default class UserService {
@@ -154,5 +164,86 @@ export default class UserService {
     await new AuthService().deleteIdentities(user.id);
 
     await this.repo.delete(user.id);
+  }
+
+  /**
+   * Get all users who still haven't set a password for their account.
+   * @param date User creation date for which people should receive an email
+   * @param returnIdentity
+   */
+  async getSetPasswordReminderUsers(date: Date, returnIdentity = false): Promise<User[]> {
+    const users = await this.repo.find({
+      where: {
+        emailVerified: false,
+        createdAt: LessThanOrEqual(date),
+        identity: Not(IsNull()),
+      },
+      relations: {
+        identity: true,
+      },
+    });
+
+    const result = users.filter((u) => u.identity != null);
+    if (returnIdentity) return result;
+    return result.map((u) => ({ ...u, identity: null } as any as User));
+  }
+
+  /**
+   * Get all users who have not yet subscribed to 3 or more tracks
+   */
+  async getTrackReminderUsers(): Promise<User[]> {
+    const users = await this.repo.find({
+      where: {
+        participantInfo: Not(IsNull()),
+      },
+      relations: {
+        subscriptions: true,
+        participantInfo: true,
+      },
+    });
+
+    return users.filter((u) => u.participantInfo != null && u.subscriptions.length < 3);
+  }
+
+  /**
+   * Send an email to all users who still have to set a password
+   * @param params
+   */
+  async sendSetPasswordReminders(params: SendSetPasswordReminderParams): Promise<void> {
+    const users = await this.getSetPasswordReminderUsers(params.date, true);
+
+    if (users.length < params.ids.length) {
+      throw new ApiError(HTTPStatus.BadRequest, 'Some users have already set a password');
+    } else if (users.length > params.ids.length) {
+      throw new ApiError(HTTPStatus.BadRequest, 'Some users missing from the list, but should receive an email.');
+    }
+    if (users.some((u) => u.identity === undefined)) throw new ApiError(HTTPStatus.BadRequest, 'Not all users can set a password');
+
+    users.forEach((user) => {
+      Mailer.getInstance().send(user, new SetPasswordReminder({
+        name: user.name,
+        email: user.email,
+        token: new AuthService().getResetPasswordToken(user, user.identity!),
+        createDate: user.createdAt,
+      }));
+    });
+  }
+
+  /**
+   * Send an email to all users who still have to subscribe for at least one track
+   * @param ids
+   */
+  async sendTrackReminders(ids: number[]): Promise<void> {
+    const users = await this.getTrackReminderUsers();
+
+    if (users.length > ids.length) {
+      throw new ApiError(HTTPStatus.BadRequest, 'Some users missing from the list, but should receive an email.');
+    }
+
+    users.forEach((user) => {
+      Mailer.getInstance().send(user, new TracksReminder({
+        name: user.name,
+      }));
+    });
   }
 }

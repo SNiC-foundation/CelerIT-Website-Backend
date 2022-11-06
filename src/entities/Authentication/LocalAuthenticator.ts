@@ -1,6 +1,7 @@
 import {
   Column, Entity, PrimaryColumn, OneToOne, JoinColumn,
 } from 'typeorm';
+// eslint-disable-next-line import/no-cycle
 import User from '../User';
 import { BaseEntWithoutId } from '../BaseEnt';
 
@@ -16,7 +17,7 @@ export default class LocalAuthenticator extends BaseEntWithoutId {
   @PrimaryColumn('uuid')
   public userId: number;
 
-  @OneToOne(() => User, { nullable: false })
+  @OneToOne(() => User, (user) => user.identity, { nullable: false })
   @JoinColumn({ name: 'userId' })
   public user: User;
 
