@@ -31,7 +31,7 @@ const reminder = new MailContent<setPasswordReminderOptions>({
     const link = `${context.url}/reset-password?token=${context.token}&email=${context.email}`;
     return `
 <p>Dear ${context.name},</p>
-<p>On ${context.createDate.toLocaleDateString(undefined, { timeZone: 'Europe/Amsterdam' })}, you creating an account for the SNiC 2022: CelerIT website, probably to activate your ticket.
+<p>On ${context.createDate.toLocaleDateString(undefined, { timeZone: 'Europe/Amsterdam' })}, you created an account for the SNiC 2022: CelerIT website, probably to activate your ticket.
 The creation process is however not yet finished, because you still need to set a password. To complete the process, use the following link any time within the next 24 hours: </p>
 <p><a href="${link}">Reset Link</a></p>
 <p>If this link somehow does not work, you can also request a password reset on the CelerIT website.</p>
@@ -42,7 +42,7 @@ It seems then that someone used the wrong email address for their ticket activat
   getText: (context) => `
 Dear ${context.name},
 
-On ${context.createDate.toLocaleDateString(undefined, { timeZone: 'Europe/Amsterdam' })}, you creating an account for the SNiC 2022: CelerIT website, probably to activate your ticket.
+On ${context.createDate.toLocaleDateString(undefined, { timeZone: 'Europe/Amsterdam' })}, you created an account for the SNiC 2022: CelerIT website, probably to activate your ticket.
 The creation process is however not yet finished, because you still need to set a password. To complete the process, use the following link any time within the next 24 hours: 
 
 ${context.url}/reset-password?token=${context.token}&email=${context.email}
