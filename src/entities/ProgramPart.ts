@@ -1,7 +1,9 @@
 import {
-  Column, Entity,
+  Column, Entity, OneToMany,
 } from 'typeorm';
 import BaseEnt from './BaseEnt';
+// eslint-disable-next-line import/no-cycle
+import Activity from './Activity';
 
 export interface ProgramPartParams {
   name: string;
@@ -19,4 +21,7 @@ export default class ProgramPart extends BaseEnt {
 
   @Column()
     endTime: Date;
+
+  @OneToMany(() => Activity, (a) => a.programPart)
+    activities: Activity[];
 }

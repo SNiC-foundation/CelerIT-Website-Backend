@@ -6,6 +6,7 @@ import BaseEnt from './BaseEnt';
 import SubscribeActivity, { UpdateSubscribeActivityParams } from './SubscribeActivity';
 // eslint-disable-next-line import/no-cycle
 import Speaker from './Speaker';
+// eslint-disable-next-line import/no-cycle
 import ProgramPart from './ProgramPart';
 
 export interface ActivityParams {
@@ -29,7 +30,7 @@ export default class Activity extends BaseEnt {
   @Column({ nullable: false })
     programPartId: number;
 
-  @ManyToOne(() => ProgramPart, { eager: true })
+  @ManyToOne(() => ProgramPart, (p) => p.activities, { eager: true })
   @JoinColumn({ name: 'programPartId' })
     programPart: ProgramPart;
 

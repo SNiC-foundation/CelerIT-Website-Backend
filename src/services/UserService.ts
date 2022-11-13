@@ -34,7 +34,9 @@ export default class UserService {
    */
   public async getAllUsers(params?: GetUserParams): Promise<User[]> {
     const relations = ['ticket', 'roles'];
-    if (params && params.subscriptions) relations.push('subscriptions');
+    if (params && params.subscriptions) {
+      relations.push('subscriptions', 'subscriptions.activity', 'subscriptions.activity.programPart');
+    }
     return this.repo.find({ relations });
   }
 

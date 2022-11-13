@@ -84,4 +84,10 @@ export class ActivityController extends Controller {
 
     await new ActivityService().subscribeToActivity(id, request.user as User);
   }
+
+  @Post('/subscribe/fill')
+  @Security('local', ['Admin'])
+  public async subscribeRemainingUsers(): Promise<void> {
+    await new ActivityService().subscribeRemainingUsers();
+  }
 }
