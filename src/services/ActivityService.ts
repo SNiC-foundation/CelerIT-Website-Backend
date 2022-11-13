@@ -158,7 +158,7 @@ export default class ActivityService {
     const subscribeActivities = await new SubscribeActivityService()
       .getAllSubscribeActivities({ activity: true, programPart: true });
     if (subscribeActivities.some((a) => a.subscriptionListCloseDate.getTime() > Date.now())) {
-      // throw new ApiError(HTTPStatus.BadRequest, 'Not all subscription lists are closed');
+      throw new ApiError(HTTPStatus.BadRequest, 'Not all subscription lists are closed');
     }
 
     const programParts = subscribeActivities
