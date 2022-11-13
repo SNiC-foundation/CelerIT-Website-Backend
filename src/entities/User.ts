@@ -72,7 +72,7 @@ export default class User extends BaseEnt {
   @JoinColumn({ name: 'partnerId' })
     partner?: Partner | null;
 
-  @ManyToMany(() => SubscribeActivity, (act) => act.subscribers)
+  @ManyToMany(() => SubscribeActivity, (act) => act.subscribers, { onDelete: 'CASCADE' })
   @JoinTable()
     subscriptions: SubscribeActivity[];
 
