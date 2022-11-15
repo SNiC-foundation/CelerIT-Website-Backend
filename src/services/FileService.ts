@@ -1,11 +1,17 @@
 import * as fs from 'fs';
-import { Express } from 'express';
+import express, { Express } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import mime from 'mime';
+import archiver from 'archiver';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import PartnerService from './PartnerService';
 import SpeakerService from './SpeakerService';
+import QrCodeGenerator from '../qrcodes/QrCodeGenerator';
+import { getDataSource } from '../database/dataSource';
+import Participant from '../entities/Participant';
+// eslint-disable-next-line import/no-cycle
+import ParticipantService from './ParticipantService';
 
 export const uploadDirLoc = 'data';
 export const uploadPartnerLogoDir = 'data/partners';
@@ -78,5 +84,34 @@ export default class FileService {
       this.removeFileAtLoc(fileLocation);
       throw new Error(err);
     }
+  }
+
+  public static async getParticipantQrCodeExport(res: express.Response): Promise<void> {
+    const participants = await getDataSource().getRepository(Participant).find();
+
+    const dir = path.join(__dirname, '../../', qrCodeDirLoc);
+    const participantService = new ParticipantService();
+
+    await Promise.all(participants.map((p) => {
+      const code = participantService.getEncryptedParticipantId(p.id);
+      return new QrCodeGenerator(code, dir).generateCode();
+    }));
+
+    const archive = archiver('zip');
+
+    return new Promise((resolve, reject) => {
+      archive.on('error', (err) => {
+        reject(err);
+      });
+
+      res.on('finish', () => {
+        res.end();
+        resolve();
+      });
+
+      archive.directory(dir, false);
+      archive.pipe(res);
+      archive.finalize();
+    });
   }
 }

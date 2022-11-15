@@ -59,7 +59,10 @@ export default class ParticipantService {
   /**
    * Update Participant
    */
-  async updateParticipant(id: number, params: Partial<UpdateParticipantParams>): Promise<Participant> {
+  async updateParticipant(
+    id: number,
+    params: Partial<UpdateParticipantParams>,
+  ): Promise<Participant> {
     await this.repo.update(id, params);
     const participant = await this.getParticipant(id);
 

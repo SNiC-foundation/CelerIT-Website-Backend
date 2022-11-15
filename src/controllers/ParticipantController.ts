@@ -6,6 +6,7 @@ import ParticipantService from '../services/ParticipantService';
 import Participant, { CreateParticipantParams, UpdateParticipantParams } from '../entities/Participant';
 import User from '../entities/User';
 import { ApiError, HTTPStatus } from '../helpers/error';
+import FileService from '../services/FileService';
 
 /**
  * TODO: Add paramater validation
@@ -92,5 +93,18 @@ export class ParticipantController extends Controller {
   @Security('local', ['Admin'])
   public async getParticipantsExport() {
     return new ParticipantService().getParticipantExport();
+  }
+
+  /**
+   * Get a zip file of all participant QR codes
+   */
+  @Get('export/qrcodes')
+  @Security('local', ['Admin'])
+  public async getParticipantQrCodeExport(@Request() req: express.Request) {
+    const response = (<any>req).res as express.Response;
+    response.setHeader('Content-Type', 'application/zip');
+    response.setHeader('Content-Disposition', 'attachment; filename="qrcodes.zip"');
+
+    await FileService.getParticipantQrCodeExport(response);
   }
 }
