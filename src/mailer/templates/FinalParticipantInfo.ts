@@ -56,11 +56,14 @@ const reminder = new MailContent<FinalParticipantInfoParams>({
 <p><b>Program</b><br>
 Your personal program is as follows:
 <ul>
+<li>10:00 - 10:45: Check-in</li>
 <li>11:00 - 12:15: How evolving technology has made it easier for everyone to experience the world (Hertog Jan Zaal)</li>
 <li>${formatTrack(context.track1)}</li>
+<li>13:30 - 14:30: Lunch</li>
 <li>${formatTrack(context.track2)}</li>
 <li>${formatTrack(context.track3)}</li>
 <li>17:15 - 18:45: What can algorithms teach us about education? (Hertog Jan Zaal)</li>
+<li>18:45 - 20:30: Dinner with drinks</li>
 </ul>
 Please make sure to visit the sessions you have signed up for, as all sessions are completely booked.</p>
  
@@ -92,11 +95,14 @@ We are looking forward to seeing you at CelerIT next week! In this email we will
 
 Program:
 Your personal program is as follows:
+10:00 - 10:45: Check-in
 11:00 - 12:15: How evolving technology has made it easier for everyone to experience the world (Hertog Jan Zaal)
 ${formatTrack(context.track1)}
+13:30 - 14:30: Lunch
 ${formatTrack(context.track2)}
 ${formatTrack(context.track3)}
 17:15 - 18:45: What can algorithms teach us about education? (Hertog Jan Zaal)
+18:45 - 20:30: Dinner with drinks
 
 Please make sure to visit the sessions you have signed up for, as all sessions are completely booked.
  
