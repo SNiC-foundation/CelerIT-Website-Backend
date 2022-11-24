@@ -12,6 +12,8 @@ import AuthService from './AuthService';
 import { Mailer } from '../mailer';
 import SetPasswordReminder from '../mailer/templates/SetPasswordReminder';
 import TracksReminder from '../mailer/templates/TracksReminder';
+import FinalParticipantInfo from '../mailer/templates/FinalParticipantInfo';
+import Partner, { SponsorPackage } from '../entities/Partner';
 
 export interface GetUserParams {
   subscriptions: boolean;
@@ -245,6 +247,62 @@ export default class UserService {
     users.forEach((user) => {
       Mailer.getInstance().send(user, new TracksReminder({
         name: user.name,
+      }));
+    });
+  }
+
+  async sendFinalInfo() {
+    const users = await this.repo.find({
+      where: {
+        participantInfo: Not(IsNull()),
+      },
+      relations: {
+        subscriptions: {
+          activity: {
+            programPart: true,
+          },
+        },
+        participantInfo: true,
+        ticket: true,
+      },
+    });
+
+    const partners = (await getDataSource().getRepository(Partner).find({
+      where: {
+        description: Not(IsNull()),
+      },
+    })).filter((p) => p.description !== '');
+
+    const platinum = partners.filter((p) => p.package === SponsorPackage.PLATINUM);
+    const gold = partners.filter((p) => p.package === SponsorPackage.GOLD);
+
+    users.forEach((user) => {
+      const sorted = user.subscriptions
+        .sort((a, b) => a.activity.programPart.beginTime.getTime()
+          - b.activity.programPart.beginTime.getTime());
+
+      Mailer.getInstance().send(user, new FinalParticipantInfo({
+        name: user.name,
+        ticketCode: user.ticket?.code || '???',
+        track1: sorted[0] ? {
+          name: sorted[0].activity.name,
+          location: sorted[0].activity.location,
+          beginTime: sorted[0].activity.programPart.beginTime,
+          endTime: sorted[0].activity.programPart.endTime,
+        } : undefined,
+        track2: sorted[1] ? {
+          name: sorted[1].activity.name,
+          location: sorted[1].activity.location,
+          beginTime: sorted[1].activity.programPart.beginTime,
+          endTime: sorted[1].activity.programPart.endTime,
+        } : undefined,
+        track3: sorted[2] ? {
+          name: sorted[2].activity.name,
+          location: sorted[2].activity.location,
+          beginTime: sorted[2].activity.programPart.beginTime,
+          endTime: sorted[2].activity.programPart.endTime,
+        } : undefined,
+        partners: platinum.concat(gold.sort(() => Math.random() - 0.5)),
       }));
     });
   }

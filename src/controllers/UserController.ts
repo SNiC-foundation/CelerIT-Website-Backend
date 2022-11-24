@@ -135,4 +135,10 @@ export class UserController extends Controller {
   public async sendTracksReminders(@Body() ids: number[]): Promise<void> {
     await new UserService().sendTrackReminders(ids);
   }
+
+  @Post('mail/final-info')
+  @Security('local', ['Admin'])
+  public async sendFinalInfo(): Promise<void> {
+    await new UserService().sendFinalInfo();
+  }
 }
