@@ -252,7 +252,7 @@ export default class UserService {
   }
 
   async sendFinalInfo() {
-    const users = await this.repo.find({
+    const users = (await this.repo.find({
       where: {
         participantInfo: Not(IsNull()),
       },
@@ -265,7 +265,7 @@ export default class UserService {
         participantInfo: true,
         ticket: true,
       },
-    });
+    })).filter((u) => u.participantInfo != null);
 
     const partners = (await getDataSource().getRepository(Partner).find({
       where: {
