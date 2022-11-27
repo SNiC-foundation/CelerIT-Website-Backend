@@ -49,6 +49,7 @@ function formatTrack(track?: Track) {
 
 const reminder = new MailContent<FinalParticipantInfoParams>({
   getHTML: (context) => `
+<p><i>Due to problems with our email server, you could have received this email already. If this is the case, our apologies for this.</i></p>
 <p>Dear ${context.name},</p>
 
 <p>We are looking forward to seeing you at CelerIT next week! In this email we will give you an overview of all the last things you need to know for next week!</p>
@@ -87,9 +88,13 @@ ${context.partners.map((p) => `<hr>
 ${p.description}
 </p><br>`).join(' ')}
 <br>
-<p>See you next week at CelerIT!</p>`,
+<p>See you Wednesday at CelerIT!</p>`,
   getSubject: () => 'Final information for SNiC 2022: CelerIT',
-  getText: (context) => `Dear ${context.name},
+  getText: (context) => `>Due to problems with our email server, you could have received this email already. If this is the case, our apologies for this.
+
+----
+
+Dear ${context.name},
 
 We are looking forward to seeing you at CelerIT next week! In this email we will give you an overview of all the last things you need to know for next week!
 
@@ -124,7 +129,7 @@ ${p.description}`).join(`
 
 `)}
 
-See you next week at CelerIT!`,
+See you Wednesday at CelerIT!`,
 });
 
 export default class FinalParticipantInfo extends MailTemplate<FinalParticipantInfoParams> {
