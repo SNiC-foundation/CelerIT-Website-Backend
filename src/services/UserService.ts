@@ -251,7 +251,64 @@ export default class UserService {
     });
   }
 
-  async sendFinalInfo() {
+  /**
+   * Construct the email and send it to the given user
+   * @param user
+   * @param platinum
+   * @param gold
+   * @private
+   */
+  private constructFinalInfoMail(user: User, platinum: Partner[], gold: Partner[]) {
+    const sorted = user.subscriptions
+      .sort((a, b) => a.activity.programPart.beginTime.getTime()
+        - b.activity.programPart.beginTime.getTime());
+
+    Mailer.getInstance().send(user, new FinalParticipantInfo({
+      name: user.name,
+      ticketCode: user.ticket?.code || '???',
+      track1: sorted[0] ? {
+        name: sorted[0].activity.name,
+        location: sorted[0].activity.location,
+        beginTime: sorted[0].activity.programPart.beginTime,
+        endTime: sorted[0].activity.programPart.endTime,
+      } : undefined,
+      track2: sorted[1] ? {
+        name: sorted[1].activity.name,
+        location: sorted[1].activity.location,
+        beginTime: sorted[1].activity.programPart.beginTime,
+        endTime: sorted[1].activity.programPart.endTime,
+      } : undefined,
+      track3: sorted[2] ? {
+        name: sorted[2].activity.name,
+        location: sorted[2].activity.location,
+        beginTime: sorted[2].activity.programPart.beginTime,
+        endTime: sorted[2].activity.programPart.endTime,
+      } : undefined,
+      partners: platinum.concat(gold.sort(() => Math.random() - 0.5)),
+    }));
+  }
+
+  /**
+   * Final info email to a single user
+   * @param user
+   */
+  async sendFinalInfoSingleUser(user: User) {
+    const partners = (await getDataSource().getRepository(Partner).find({
+      where: {
+        description: Not(IsNull()),
+      },
+    })).filter((p) => p.description !== '');
+
+    const platinum = partners.filter((p) => p.package === SponsorPackage.PLATINUM);
+    const gold = partners.filter((p) => p.package === SponsorPackage.GOLD);
+
+    await this.constructFinalInfoMail(user, platinum, gold);
+  }
+
+  /**
+   * Final info to all users
+   */
+  async sendFinalInfoAllUsers() {
     const users = (await this.repo.find({
       where: {
         participantInfo: Not(IsNull()),
@@ -276,34 +333,6 @@ export default class UserService {
     const platinum = partners.filter((p) => p.package === SponsorPackage.PLATINUM);
     const gold = partners.filter((p) => p.package === SponsorPackage.GOLD);
 
-    users.forEach((user) => {
-      const sorted = user.subscriptions
-        .sort((a, b) => a.activity.programPart.beginTime.getTime()
-          - b.activity.programPart.beginTime.getTime());
-
-      Mailer.getInstance().send(user, new FinalParticipantInfo({
-        name: user.name,
-        ticketCode: user.ticket?.code || '???',
-        track1: sorted[0] ? {
-          name: sorted[0].activity.name,
-          location: sorted[0].activity.location,
-          beginTime: sorted[0].activity.programPart.beginTime,
-          endTime: sorted[0].activity.programPart.endTime,
-        } : undefined,
-        track2: sorted[1] ? {
-          name: sorted[1].activity.name,
-          location: sorted[1].activity.location,
-          beginTime: sorted[1].activity.programPart.beginTime,
-          endTime: sorted[1].activity.programPart.endTime,
-        } : undefined,
-        track3: sorted[2] ? {
-          name: sorted[2].activity.name,
-          location: sorted[2].activity.location,
-          beginTime: sorted[2].activity.programPart.beginTime,
-          endTime: sorted[2].activity.programPart.endTime,
-        } : undefined,
-        partners: platinum.concat(gold.sort(() => Math.random() - 0.5)),
-      }));
-    });
+    await Promise.all(users.map((user) => this.constructFinalInfoMail(user, platinum, gold)));
   }
 }

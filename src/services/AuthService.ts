@@ -9,8 +9,9 @@ import { generateSalt, hashPassword } from '../authentication/LocalStrategy';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import { getDataSource } from '../database/dataSource';
 import { Mailer, PasswordReset, WelcomeWithReset } from '../mailer';
-import { TicketActivated } from '../mailer/templates';
 import AccountForYou from '../mailer/templates/AccountForYou';
+// eslint-disable-next-line import/no-cycle
+import UserService from './UserService';
 
 const INVALID_TOKEN = 'Invalid token.';
 export interface AuthStatus {
@@ -181,7 +182,9 @@ export default class AuthService {
     }
 
     if (!user.emailVerified && user.participantInfo !== undefined) {
-      await Mailer.getInstance().send(user, new TicketActivated({ name: user.name, ticketCode: user.ticket?.code || '' }));
+      // await Mailer.getInstance().send(user,
+      // new TicketActivated({ name: user.name, ticketCode: user.ticket?.code || '' }));
+      await new UserService().sendFinalInfoSingleUser(user);
       user.emailVerified = true;
       await user.save();
     }
