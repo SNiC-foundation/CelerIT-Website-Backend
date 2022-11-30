@@ -259,26 +259,26 @@ export default class UserService {
    * @private
    */
   private constructFinalInfoMail(user: User, platinum: Partner[], gold: Partner[]) {
-    const sorted = user.subscriptions
+    const sorted = user.subscriptions ? user.subscriptions
       .sort((a, b) => a.activity.programPart.beginTime.getTime()
-        - b.activity.programPart.beginTime.getTime());
+        - b.activity.programPart.beginTime.getTime()) : undefined;
 
     Mailer.getInstance().send(user, new FinalParticipantInfo({
       name: user.name,
       ticketCode: user.ticket?.code || '???',
-      track1: sorted[0] ? {
+      track1: sorted && sorted[0] ? {
         name: sorted[0].activity.name,
         location: sorted[0].activity.location,
         beginTime: sorted[0].activity.programPart.beginTime,
         endTime: sorted[0].activity.programPart.endTime,
       } : undefined,
-      track2: sorted[1] ? {
+      track2: sorted && sorted[1] ? {
         name: sorted[1].activity.name,
         location: sorted[1].activity.location,
         beginTime: sorted[1].activity.programPart.beginTime,
         endTime: sorted[1].activity.programPart.endTime,
       } : undefined,
-      track3: sorted[2] ? {
+      track3: sorted && sorted[2] ? {
         name: sorted[2].activity.name,
         location: sorted[2].activity.location,
         beginTime: sorted[2].activity.programPart.beginTime,
