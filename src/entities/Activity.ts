@@ -14,6 +14,7 @@ export interface ActivityParams {
   location: string;
   programPartId: number;
   description?: string;
+  recordingUrl?: string;
   image?: string;
   speakerIds?: number[];
   subscribe?: UpdateSubscribeActivityParams;
@@ -36,6 +37,9 @@ export default class Activity extends BaseEnt {
 
   @Column({ type: 'text', nullable: true })
     description?: string | null;
+
+  @Column({ nullable: true })
+    recordingUrl?: string;
 
   @ManyToMany(() => Speaker, (speaker) => speaker.activities)
   @JoinTable()
