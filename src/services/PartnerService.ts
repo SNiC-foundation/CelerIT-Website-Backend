@@ -86,7 +86,7 @@ export default class PartnerService {
       { where: { id: participantId } },
     );
     if (participant == null) {
-      throw new ApiError(HTTPStatus.NotFound, 'Participant not found');
+      throw new ApiError(HTTPStatus.NotFound, `Participant not found with code ${params.encryptedId}`);
     } else {
       await this.logScan(id, participant);
     }

@@ -36,7 +36,7 @@ export class AuthController extends Controller {
       },
     }, ticket);
     await new AuthService().createIdentityLocal(user, true, false);
-    new BarcodeGenerator(ticket.code, barcodeDirLoc).generateCode();
+    await new BarcodeGenerator(ticket.code, barcodeDirLoc).generateCode();
     return user;
   }
 

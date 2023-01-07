@@ -5,6 +5,9 @@ import { ApiError, HTTPStatus } from '../helpers/error';
 import SubscribeActivityService from './SubscribeActivityService';
 import Speaker from '../entities/Speaker';
 import User from '../entities/User';
+import UserService from './UserService';
+import ProgramPartService from './ProgramPartService';
+import SubscribeActivity from '../entities/SubscribeActivity';
 
 export interface ActivityResponse {
   activity: Activity;
@@ -146,5 +149,54 @@ export default class ActivityService {
       });
       await manager.save<Activity>(activitiesInSameProgramPart);
     });
+  }
+
+  /**
+   * Automatically sign up users to activities, if they are not subscribed to all tracks
+   */
+  async subscribeRemainingUsers() {
+    const subscribeActivities = await new SubscribeActivityService()
+      .getAllSubscribeActivities({ activity: true, programPart: true });
+    if (subscribeActivities.some((a) => a.subscriptionListCloseDate.getTime() > Date.now())) {
+      throw new ApiError(HTTPStatus.BadRequest, 'Not all subscription lists are closed');
+    }
+
+    const programParts = subscribeActivities
+      .map((s) => s.activity.programPart)
+      .filter((p, i, self) => i === self.findIndex((x) => x.id === p.id));
+
+    const users = await new UserService().getAllUsers({ subscriptions: true });
+    // Get all users who have not subscribed to 3 tracks.
+    const filteredUsers = users.filter((u) => u.subscriptions.length < 3 && !!u.participantInfo);
+
+    const subscribeActRepo = getDataSource().getRepository(SubscribeActivity);
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const user of filteredUsers) {
+      // Get all program parts a user is indirectly not subscribed to, i.e. the user is not
+      // subscribed to any activity that belongs to these program parts
+      // eslint-disable-next-line no-await-in-loop
+      const programPartsToSubscribeTo = await Promise.all(programParts
+        .filter((p) => !user.subscriptions.some((s) => s.activity.programPart.id === p.id))
+        .map((p) => new ProgramPartService()
+          .getProgramPart(p.id, { subscribe: true, activity: true })));
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const programPart of programPartsToSubscribeTo) {
+        // Get all activities that still have available slots
+        const availableActivities = programPart.activities
+          .filter((a) => a.subscribe
+            && a.subscribe.subscribers.length < a.subscribe.maxParticipants);
+
+        const chosenActivity = availableActivities[
+          Math.floor(Math.random() * availableActivities.length)
+        ];
+        const subscribeAct = chosenActivity.subscribe!;
+
+        subscribeAct.subscribers.push(user);
+        // eslint-disable-next-line no-await-in-loop
+        await subscribeActRepo.save(subscribeAct);
+      }
+    }
   }
 }

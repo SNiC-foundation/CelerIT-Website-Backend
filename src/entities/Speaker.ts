@@ -19,7 +19,6 @@ export default class Speaker extends BaseEnt {
     description: string;
 
   @ManyToMany(() => Activity, (act) => act.speakers)
-  @JoinTable()
     activities: Activity[];
 
   @Column({ nullable: true })

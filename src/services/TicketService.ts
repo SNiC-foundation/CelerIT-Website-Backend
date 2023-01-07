@@ -68,10 +68,14 @@ export default class TicketService {
     const ticket = await this.repo.findOne({
       where: { code },
       relations: {
-        scans: true,
+        scans: {
+          user: true,
+        },
         user: {
           subscriptions: {
-            activity: true,
+            activity: {
+              programPart: true,
+            },
           },
           participantInfo: true,
         },
@@ -79,11 +83,6 @@ export default class TicketService {
     });
     if (ticket == null) throw new ApiError(HTTPStatus.NotFound, 'Ticket not found.');
 
-    // Somehow the relation does not work. No idea why, no time to look for an actual fix
-    ticket.scans = await this.ticketScanRepo.find({
-      where: { ticketId: ticket.id },
-      relations: { user: true },
-    });
     const scan = Object.assign(new TicketScan(), {
       ticketId: ticket.id,
       userId: user.id,

@@ -16,7 +16,7 @@ export default class Ticket extends BaseEnt {
   @Column({ type: 'integer', nullable: true })
     userId?: number | null;
 
-  @OneToOne(() => User, { nullable: true })
+  @OneToOne(() => User, { nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'userId' })
     user?: User | null;
 
@@ -26,6 +26,6 @@ export default class Ticket extends BaseEnt {
   @Column({ unique: true })
     code: string;
 
-  @OneToMany(() => TicketScan, (scan) => scan.user)
+  @OneToMany(() => TicketScan, (scan) => scan.ticket)
     scans: TicketScan[];
 }

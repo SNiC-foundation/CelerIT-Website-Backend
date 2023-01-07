@@ -3,6 +3,11 @@ import ProgramPart, { ProgramPartParams } from '../entities/ProgramPart';
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
+export interface getProgramPartParams {
+  activity: boolean;
+  subscribe: boolean;
+}
+
 export default class ProgramPartService {
   repo: Repository<ProgramPart>;
 
@@ -13,16 +18,23 @@ export default class ProgramPartService {
   /**
    * Get all ProgramParts
    */
-  public async getAllProgramParts(): Promise<ProgramPart[]> {
-    return this.repo.find();
+  public async getAllProgramParts(params?: getProgramPartParams): Promise<ProgramPart[]> {
+    const relations: string[] = [];
+    if (params?.activity) relations.push('activities');
+    if (params?.subscribe) relations.push('activities.subscribe', 'activities.subscribe.subscribers');
+    return this.repo.find({ relations });
   }
 
   /**
    * Get one ProgramPart
    * TODO: Add relations in findOne()
    */
-  async getProgramPart(id: number): Promise<ProgramPart> {
-    const programPart = await this.repo.findOne({ where: { id } });
+  async getProgramPart(id: number, params?: getProgramPartParams): Promise<ProgramPart> {
+    const relations: string[] = [];
+    if (params?.activity) relations.push('activities');
+    if (params?.subscribe) relations.push('activities.subscribe', 'activities.subscribe.subscribers');
+
+    const programPart = await this.repo.findOne({ where: { id }, relations });
     if (programPart == null) {
       throw new ApiError(HTTPStatus.NotFound, 'ProgramPart not found');
     }

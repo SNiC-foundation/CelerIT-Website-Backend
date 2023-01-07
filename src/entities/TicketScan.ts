@@ -15,11 +15,11 @@ export default class TicketScan extends BaseEnt {
   @Column()
     userId: number;
 
-  @ManyToOne(() => Ticket, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Ticket, (ticket) => ticket.scans, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ticketId' })
     ticket: Ticket;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.scans, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
     user: User;
 }

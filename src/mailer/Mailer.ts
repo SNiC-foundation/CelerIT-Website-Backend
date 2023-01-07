@@ -44,7 +44,8 @@ export default class Mailer {
         to: to.email,
       });
     } catch (error: any) {
-      throw new Error(error);
+      console.error(`Could not send email to ${to.email} due to an error:`);
+      console.error(error);
     }
   }
 }

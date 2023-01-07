@@ -1,8 +1,8 @@
 import {
-  Body, Controller, Delete, Get, Post, Put, Request, Route, Security, Tags,
+  Body, Controller, Delete, Get, Post, Put, Query, Request, Route, Security, Tags,
 } from 'tsoa';
 import express from 'express';
-import UserService from '../services/UserService';
+import UserService, { SendSetPasswordReminderParams } from '../services/UserService';
 import User, { PersonalUserParams, UserParams } from '../entities/User';
 import { ApiError, HTTPStatus } from '../helpers/error';
 import AuthService from '../services/AuthService';
@@ -93,5 +93,52 @@ export class UserController extends Controller {
   @Security('local', ['Admin'])
   public async deleteUser(id: number): Promise<void> {
     return new UserService().deleteUser(id);
+  }
+
+  /**
+   * Get all users who still haven't set a password for their account.
+   * @param date User creation date for which people should receive an email
+   */
+  @Get('mail/set-password-reminder')
+  @Security('local', ['Admin'])
+  public async getSetPasswordReminderUsers(@Query() date: Date): Promise<User[]> {
+    return new UserService().getSetPasswordReminderUsers(date);
+  }
+
+  /**
+   * Send an email to all users who still have to set a password
+   * @param params
+   */
+  @Post('mail/set-password-reminder')
+  @Security('local', ['Admin'])
+  public async sendSetPasswordReminder(
+    @Body() params: SendSetPasswordReminderParams,
+  ): Promise<void> {
+    await new UserService().sendSetPasswordReminders(params);
+  }
+
+  /**
+   * Get all users who have not yet subscribed to 3 or more tracks
+   */
+  @Get('mail/tracks-reminder')
+  @Security('local', ['Admin'])
+  public async getTracksReminderUsers(): Promise<User[]> {
+    return new UserService().getTrackReminderUsers();
+  }
+
+  /**
+   * Send an email to all users who still have to subscribe for at least one track
+   * @param ids
+   */
+  @Post('mail/tracks-reminder')
+  @Security('local', ['Admin'])
+  public async sendTracksReminders(@Body() ids: number[]): Promise<void> {
+    await new UserService().sendTrackReminders(ids);
+  }
+
+  @Post('mail/final-info')
+  @Security('local', ['Admin'])
+  public async sendFinalInfo(): Promise<void> {
+    await new UserService().sendFinalInfoAllUsers();
   }
 }

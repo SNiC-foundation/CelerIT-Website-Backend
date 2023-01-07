@@ -12,6 +12,8 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "gen-client": "nswag openapi2tsclient /input:src/public/swagger.json /output:../SNiC-Congress-Frontend/src/clients/server.generated.ts /ServiceHost:.",
+    "gen-barcodes:dev": "ts-node src/qrcodes/gen-barcodes.ts",
+    "gen-barcodes:prod": "node build/qrcodes/gen-barcodes.ts",
     "test": "mocha -r ts-node/register --timeout 10000 --file ./test/index.ts --reporter mocha-multi-reporters --reporter-options configFile=mocha.json 'test/**/*.ts' --exit",
     "test-file": "mocha -r ts-node/register --timeout 10000 --file ./test/index.ts",
     "coverage": "nyc npm run test"
@@ -28,6 +30,7 @@
   "homepage": "https://github.com/GEWIS/SNiC-Congress-Backend#readme",
   "dependencies": {
     "@tsoa/runtime": "^4.1.0",
+    "archiver": "^5.3.1",
     "body-parser": "^1.20.0",
     "bs58": "^5.0.0",
     "canvas": "^2.10.1",
@@ -58,6 +61,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^6.1.2",
+    "@types/archiver": "^5.3.1",
     "@types/body-parser": "^1.19.2",
     "@types/chai-as-promised": "^7.1.5",
     "@types/cookie-parser": "^1.4.3",

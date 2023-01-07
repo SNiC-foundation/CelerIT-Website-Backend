@@ -6,6 +6,11 @@ import SubscribeActivity, {
 import { getDataSource } from '../database/dataSource';
 import { HTTPStatus, ApiError } from '../helpers/error';
 
+export interface getSubscribeActivityParams {
+  activity: boolean;
+  programPart: boolean;
+}
+
 export default class SubscribeActivityService {
   repo: Repository<SubscribeActivity>;
 
@@ -16,8 +21,13 @@ export default class SubscribeActivityService {
   /**
    * Get all SubscribeActivities
    */
-  public async getAllSubscribeActivities(): Promise<SubscribeActivity[]> {
-    return this.repo.find();
+  public async getAllSubscribeActivities(
+    params?: getSubscribeActivityParams,
+  ): Promise<SubscribeActivity[]> {
+    const relations: string[] = [];
+    if (params && params.activity) relations.push('activity');
+    if (params && params.programPart) relations.push('activity.programPart');
+    return this.repo.find({ relations });
   }
 
   /**
